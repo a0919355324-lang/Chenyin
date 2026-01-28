@@ -1,0 +1,3974 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>呈英繁華賽馬盤</title>
+
+<style>
+  :root{
+  /* 復古三色（來自你貼圖） */
+  --blue:#334B89;
+  --lace:#FFF3E1;
+  --red:#D13631;
+  --gold:#E7A72C;
+
+  --ink:#0B1220;
+  --muted:#5B6475;
+
+  --cell-w: 80px;
+  --cell-h: 78px;
+
+  --track:#FFFFFF;
+  --grid: rgba(11,18,32,.12);
+
+  /* 命運門/保護區：用「淡化」版本，避免太重 */
+  --gate-bg: rgba(209,54,49,.10);
+  --gate-ring: rgba(209,54,49,.40);
+
+  --safe-bg: rgba(51,75,137,.10);
+  --safe-ring: rgba(51,75,137,.38);
+
+  /* 終點：復古黃系，不要亮金浮誇 */
+  --finish-a:#FFF1C2;
+  --finish-b:#E7A72C;
+  --finish-c:#C98113;
+
+  --panel:#FFFFFF;
+  --stroke: rgba(11,18,32,.10);
+  --shadow: 0 16px 40px rgba(11,18,32,.14);
+  --shadow2: 0 12px 28px rgba(11,18,32,.12);
+
+  --radius: 18px;
+}
+
+
+  *{ box-sizing:border-box; }
+
+  body{
+  margin:0;
+  padding:18px 18px 28px;
+  font-family:"Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  color: var(--ink);
+
+  /* 復古紙感：米白底 + 很淡的藍/紅噴點 */
+  background:
+    radial-gradient(circle at 12% 10%, rgba(51,75,137,.09) 0 16%, transparent 17%),
+    radial-gradient(circle at 88% 12%, rgba(209,54,49,.07) 0 14%, transparent 15%),
+    radial-gradient(circle at 20% 86%, rgba(231,167,44,.08) 0 15%, transparent 16%),
+    linear-gradient(180deg, var(--lace) 0%, #ffffff 100%);
+}
+
+
+
+
+  /* ===== Top bar ===== */
+  .topBar{
+  background: var(--blue);
+  border-radius: 22px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow2);
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.topBar h1{
+  margin:0;
+  font-size:28px;
+  font-weight:1000;
+  letter-spacing:1px;
+  color: var(--gold);          /* 黃字：復古感 */
+}
+
+.topBar .sub{
+  text-align:right;
+  color: rgba(255,243,225,.88); /* 米白字 */
+  font-size:14px;
+  font-weight:800;
+  line-height:1.25;
+}
+
+.dot{
+  width:10px; height:10px; border-radius:999px;
+  background: var(--red);       /* 紅點 */
+  box-shadow: 0 0 0 4px rgba(209,54,49,.18);
+}
+
+
+  /* ===== Layout ===== */
+  .layout{
+    display:grid;
+    grid-template-columns:auto 560px;
+    gap:14px;
+    align-items:start;
+  }
+  .leftCol{ display:grid; gap:12px; }
+
+  /* ===== Card containers ===== */
+  .card{
+    background: var(--panel);
+    border:1px solid var(--stroke);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .cardPad{ padding:12px; }
+
+  /* ===== Board ===== */
+  table{
+    border-collapse: separate;
+    border-spacing:0;
+    width:max-content;
+    border-radius:14px;
+    overflow:hidden;
+  }
+
+  th, td{
+    border:1px solid var(--grid);
+    width: var(--cell-w);
+    height: var(--cell-h);
+    text-align:center;
+    vertical-align: middle;
+    user-select:none;
+    padding:0;
+  }
+
+  thead th{
+    background: rgba(46,76,140,.06);
+    font-weight:1000;
+    color: var(--blue);
+    font-size:16px;
+  }
+
+  th.corner{
+    width:260px;
+    background: rgba(46,76,140,.06);
+  }
+  th.rowhead{
+    width:260px;
+    background: rgba(46,76,140,.06);
+    padding:12px 10px;
+    cursor:pointer;
+  }
+
+  .rowheadWrap{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    align-items:center;
+    justify-content:center;
+    line-height:1.05;
+  }
+  .rowTheme{
+    font-size:22px;
+    font-weight:1000;
+    letter-spacing:.9px;
+    color: var(--blue);
+  }
+  .rowMembers{
+    font-size:13px;
+    font-weight:900;
+    color: rgba(11,18,32,.78);
+    text-align:center;
+    padding:0 10px;
+  }
+  .rowHint{
+    font-size:12px;
+    font-weight:900;
+    color: rgba(11,18,32,.55);
+  }
+
+  td:hover{
+  box-shadow:
+    inset 0 0 0 2px rgba(51,75,137,.55),
+    0 0 0 5px rgba(231,167,44,.12);
+  transform: translateY(-1px);
+  position: relative;
+  z-index: 1;
+}
+
+
+
+  /* 命運門：淡紅 */
+  td.gate:hover{
+  box-shadow:
+    inset 0 0 0 2px var(--gate-ring),
+    0 0 0 5px rgba(209,54,49,.10);
+}
+td.safe:hover{
+  box-shadow:
+    inset 0 0 0 2px var(--safe-ring),
+    0 0 0 5px rgba(51,75,137,.12);
+}
+
+
+  /* 保護區：淡藍 */
+  td.safe{
+    background: var(--safe-bg);
+  }
+  td.safe:hover{
+    box-shadow:
+      inset 0 0 0 2px var(--safe-ring),
+      0 0 0 5px rgba(46,76,140,.12);
+  }
+
+  /* 終點：純金色漸層（不含圓點點） */
+  td.finish{
+    background: linear-gradient(135deg, var(--finish-a) 0%, var(--finish-b) 55%, var(--finish-c) 100%);
+    color:#3a2200;
+    font-weight:1000;
+  }
+  td.finish:hover{
+    box-shadow:
+      inset 0 0 0 3px rgba(255,255,255,.80),
+      0 0 0 6px rgba(255,194,71,.16);
+  }
+
+  /* Group headers */
+  th.group-empty{ background: rgba(46,76,140,.06); }
+  th.group-safe{
+    background: rgba(46,76,140,.10);
+    font-weight:1000;
+    padding:10px 10px;
+    font-size:14px;
+    color: var(--blue);
+  }
+  th.group-finish{
+    background: rgba(255,194,71,.18);
+    font-weight:1000;
+    font-size:16px;
+    color: #3a2200;
+  }
+
+  .horseImg{
+    width: 58px;
+    height: 58px;
+    display: inline-block;
+    filter: drop-shadow(0 8px 10px rgba(11,18,32,.18));
+  }
+
+  /* ===== Right panels ===== */
+  .panel{
+    background: var(--panel);
+    border:1px solid var(--stroke);
+    border-radius: var(--radius);
+    padding:12px;
+    box-shadow: var(--shadow);
+    margin-bottom:12px;
+  }
+  .panel h3{
+    margin:0 0 8px 0;
+    font-size:17px;
+    font-weight:1000;
+    letter-spacing:.3px;
+    color: var(--blue);
+  }
+  .muted{
+    color: rgba(11,18,32,.62);
+    font-size:14px;
+    font-weight:800;
+    line-height:1.25;
+  }
+
+  .rank,.log{
+    margin:0;
+    padding-left:18px;
+    display:grid;
+    gap:8px;
+    color: rgba(11,18,32,.85);
+    font-weight:900;
+    font-size:14px;
+  }
+  .log{ max-height: 240px; overflow:auto; }
+
+  .btns{ display:flex; gap:8px; margin-top:10px; flex-wrap: wrap; }
+  button{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(51,75,137,.20);
+  background: rgba(51,75,137,.08);
+  color: var(--blue);
+  cursor:pointer;
+  font-weight:1000;
+  letter-spacing:.2px;
+  font-size:14px;
+}
+
+button:hover{
+  box-shadow: 0 0 0 3px rgba(231,167,44,.16);
+}
+
+  button:disabled{ cursor:not-allowed; opacity:.40; }
+
+  /* Team UI */
+  #teamArea{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+    margin-top:8px;
+    margin-bottom:10px;
+  }
+  .teamSlot{
+    border:1px solid rgba(11,18,32,.10);
+    border-radius:14px;
+    padding:10px;
+    cursor:pointer;
+    text-align:center;
+    background: #fff;
+    transition:.12s;
+  }
+  .teamSlot:hover{ box-shadow:0 0 0 3px rgba(46,76,140,.12); }
+  .teamSlot.full{
+    background: rgba(250,45,26,.06);
+    border-color: rgba(250,45,26,.18);
+  }
+  .slotTitle{ font-weight:1000; font-size:15px; color: var(--blue); }
+  .slotMembers{ font-weight:900; margin-top:6px; font-size:13px; color: rgba(11,18,32,.82); }
+  .slotMembers.empty{ color: rgba(11,18,32,.52); }
+  .slotHint{ font-size:12px; color: rgba(11,18,32,.56); margin-top:6px; font-weight:900; }
+
+  #memberPool{ display:flex; flex-wrap:wrap; gap:8px; }
+  .poolHint{ font-size:13px; color: rgba(11,18,32,.60); margin-top:6px; font-weight:900; }
+
+  /* ===== Prize (半寬) ===== */
+  .prizeRow{
+    display:flex;
+    justify-content:flex-start;
+  }
+  .prizeWrap{
+    width: 520px;              /* 半寬：固定一個舒服的參考寬度 */
+    max-width: 52%;
+    padding:10px 12px;
+    border-radius: 16px;
+    background: #fff;
+    border:1px solid var(--stroke);
+    box-shadow: var(--shadow2);
+  }
+  .prizeWrap h3{
+    margin:0 0 6px 0;
+    font-size:15px;
+    font-weight:1000;
+    color: var(--blue);
+    letter-spacing:.2px;
+  }
+  .prizeTable{
+    width:100%;
+    border-collapse: collapse;
+    overflow:hidden;
+    border-radius:12px;
+  }
+  .prizeTable th, .prizeTable td{
+    border:1px solid rgba(11,18,32,.10);
+    padding:8px 10px;
+    text-align:left;
+    background: #fff;
+    font-size:13px;
+    font-weight:900;
+    color: rgba(11,18,32,.86);
+  }
+  .prizeTable th{
+    background: rgba(46,76,140,.06);
+    color: var(--blue);
+    font-weight:1000;
+  }
+  .pill{
+    display:inline-block;
+    padding:3px 8px;
+    border-radius:999px;
+    background: rgba(250,45,26,.08);
+    border:1px solid rgba(250,45,26,.18);
+    color: var(--red);
+    font-weight:1000;
+  }
+/* =========================
+   CNY Poster Theme (打掉重練)
+   ========================= */
+
+body.cnyPoster{
+  /* 核心色票：跟你參考圖一致的「紙＋新年紅＋淡金」 */
+  --paper:#FFF6E9;
+  --paper2:#FFFDF9;
+  --ink:#111827;
+  --ink-soft: rgba(17,24,39,.72);
+
+  --cny-red:#B10F16;
+  --cny-red2:#D13631;
+  --cny-gold:#E7A72C;     /* 偏復古黃金 */
+  --cny-gold2:#C98113;
+
+  /* 卡片/陰影更像海報落紙 */
+  --stroke: rgba(17,24,39,.10);
+  --shadow: 0 18px 50px rgba(17,24,39,.14);
+  --shadow2: 0 10px 26px rgba(17,24,39,.12);
+
+  /* 棋盤格線更像印刷 */
+  --grid: rgba(17,24,39,.14);
+  --track:#FFFFFF;
+
+  margin:0;
+  padding:18px 18px 28px;
+  font-family:"Microsoft JhengHei", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  color: var(--ink);
+  /* 背景：A 方案（中國風插畫底圖）+ 紙感柔光，確保棋盤與右側面板可讀 */
+  background:
+    /* 讀性遮罩（最上層） */
+    linear-gradient(180deg, rgba(255,246,233,.82) 0%, rgba(255,253,249,.92) 55%, rgba(255,255,255,.96) 100%),
+    /* A 底圖（置底） */
+    url("A_digital_painting_landscape_painting_depicts_a_ma.png") center/cover no-repeat fixed;
+  background-color: var(--paper);
+}
+
+/* 右上角和風紋樣（淡金）+ 左下角幾何（淡紅） */
+body.cnyPoster::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .35;
+  background:
+    /* 右上：青海波（用 repeating-radial 做類似感） */
+    repeating-radial-gradient(circle at 86% 12%,
+      rgba(231,167,44,.18) 0 2px,
+      transparent 2px 12px),
+
+    /* 左上：一點點菊花/幾何氛圍（抽象線） */
+    repeating-linear-gradient(45deg,
+      rgba(231,167,44,.12) 0 1px,
+      transparent 1px 10px) 0 0/260px 260px,
+
+    /* 左下：淡紅幾何 */
+    repeating-linear-gradient(0deg,
+      rgba(209,54,49,.10) 0 1px,
+      transparent 1px 14px) 0 100%/240px 240px;
+  mix-blend-mode: multiply;
+}
+
+/* Header：改成海報式（紙上字），不要大藍條 */
+body.cnyPoster .topBar{
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 4px 2px 8px;
+  margin-bottom: 12px;
+  align-items: baseline;
+}
+
+body.cnyPoster .topBar h1{
+  color: var(--ink);
+  font-size: 34px;
+  font-weight: 1000;
+  letter-spacing: 1.2px;
+}
+
+body.cnyPoster .dot{
+  background: var(--cny-red);
+  box-shadow: 0 0 0 5px rgba(209,54,49,.12);
+}
+
+body.cnyPoster .topBar .sub{
+  color: var(--ink-soft);
+}
+
+/* 卡片：變紙張卡（像海報落紙） */
+body.cnyPoster .card,
+body.cnyPoster .panel,
+body.cnyPoster .prizeWrap{
+  background: rgba(255,255,255,.88);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(2px);
+}
+
+/* 棋盤容器：加一圈海報框線感 */
+body.cnyPoster .card.cardPad{
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid rgba(17,24,39,.12);
+  box-shadow: var(--shadow);
+}
+
+/* 表頭與車道名稱：深紅/深灰為主，像印刷 */
+body.cnyPoster thead th{
+  background: rgba(17,24,39,.04);
+  color: rgba(17,24,39,.78);
+}
+
+body.cnyPoster th.corner,
+body.cnyPoster th.rowhead{
+  background: rgba(17,24,39,.04);
+}
+
+body.cnyPoster .rowTheme{
+  color: rgba(17,24,39,.88);
+}
+body.cnyPoster .rowMembers{
+  color: rgba(17,24,39,.70);
+}
+body.cnyPoster .rowHint{
+  color: rgba(17,24,39,.52);
+}
+
+/* 格子 hover：用新年紅柔光（不要藍光） */
+body.cnyPoster td:hover{
+  box-shadow:
+    inset 0 0 0 2px rgba(209,54,49,.42),
+    0 0 0 6px rgba(209,54,49,.10);
+}
+
+/* 命運門：淡紅底 + 紅框 */
+body.cnyPoster td.gate{
+  background: rgba(209,54,49,.10);
+}
+body.cnyPoster td.gate:hover{
+  box-shadow:
+    inset 0 0 0 2px rgba(209,54,49,.45),
+    0 0 0 6px rgba(209,54,49,.12);
+}
+
+/* 保護區：淡金底（更年節） */
+body.cnyPoster td.safe{
+  background: rgba(231,167,44,.12);
+  color: rgba(58,34,0,.85);
+}
+body.cnyPoster td.safe:hover{
+  box-shadow:
+    inset 0 0 0 2px rgba(231,167,44,.46),
+    0 0 0 6px rgba(231,167,44,.12);
+}
+
+/* 終點：復古金（純漸層，無圓點） */
+body.cnyPoster td.finish{
+  background: linear-gradient(135deg, #FFF1C2 0%, var(--cny-gold) 55%, var(--cny-gold2) 100%);
+  color:#3a2200;
+}
+
+/* 按鈕：海報式（淡紅底＋紅字） */
+body.cnyPoster button{
+  background: rgba(209,54,49,.08);
+  border: 1px solid rgba(209,54,49,.18);
+  color: rgba(177,15,22,.92);
+}
+body.cnyPoster button:hover{
+  box-shadow: 0 0 0 3px rgba(209,54,49,.12);
+}
+
+/* Modal：維持紙張感 */
+body.cnyPoster .modal{
+  background: rgba(255,255,255,.95);
+  border: 1px solid rgba(17,24,39,.12);
+}
+body.cnyPoster .modalHeader{
+  background: linear-gradient(90deg, rgba(231,167,44,.18), rgba(209,54,49,.10));
+  color: rgba(17,24,39,.88);
+}
+body.cnyPoster .badge{
+  background: rgba(17,24,39,.04);
+  border: 1px solid rgba(17,24,39,.10);
+  color: rgba(17,24,39,.78);
+}
+body.cnyPoster .cardTitle{ color: rgba(17,24,39,.88); }
+body.cnyPoster .chance{ border-left-color: rgba(231,167,44,.70); }
+body.cnyPoster .fate{ border-left-color: rgba(209,54,49,.70); }
+
+  /* ===== Modal ===== */
+  .backdrop{
+    position: fixed;
+    inset: 0;
+    background: rgba(11,18,32,.52);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal{
+    width: min(900px, 100%);
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 22px 70px rgba(11,18,32,.32);
+    border: 1px solid rgba(11,18,32,.10);
+    overflow: hidden;
+  }
+  .modalHeader{
+    padding: 12px 14px;
+    background: linear-gradient(90deg, rgba(46,76,140,.14), rgba(250,45,26,.10));
+    color: var(--blue);
+    font-weight: 1000;
+    letter-spacing: .4px;
+    font-size:15px;
+  }
+  .modalBody{ padding: 14px; display: grid; gap: 12px; }
+  .badgeRow{ display:flex; gap:8px; flex-wrap: wrap; }
+  .badge{
+    border:1px solid rgba(11,18,32,.10);
+    border-radius: 999px;
+    padding: 6px 10px;
+    background: rgba(46,76,140,.06);
+    font-size: 13px;
+    font-weight: 1000;
+    color: rgba(11,18,32,.82);
+  }
+
+  .cardGrid{
+    display:grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap:10px;
+  }
+  .cardBtn{
+    text-align:left;
+    padding:12px 12px;
+    border-radius: 14px;
+    border:1px solid rgba(11,18,32,.10);
+    background: #fff;
+    cursor:pointer;
+    line-height:1.25;
+    color: rgba(11,18,32,.90);
+    font-size:14px;
+  }
+  .cardBtn:hover{ box-shadow: 0 0 0 3px rgba(46,76,140,.12); }
+  .cardTitle{ font-weight: 1000; margin-bottom: 6px; color: var(--blue); }
+  .chance{ border-left: 6px solid rgba(46,76,140,.55); }
+  .fate{ border-left: 6px solid rgba(250,45,26,.55); }
+
+  .modalBtns{
+    display:flex;
+    gap:10px;
+    justify-content: flex-end;
+    padding: 12px 14px;
+    border-top:1px solid rgba(11,18,32,.10);
+    background: rgba(46,76,140,.04);
+    flex-wrap: wrap;
+  }
+/* =========================
+   Poster Header (NEW YEAR style)
+   ========================= */
+
+body.cnyPoster .posterHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  padding: 6px 2px 10px;
+  margin-bottom: 12px;
+}
+
+body.cnyPoster .posterLeft{
+  max-width: 860px;
+}
+
+body.cnyPoster .posterKicker{
+  font-weight: 900;
+  letter-spacing: .22em;
+  font-size: 12px;
+  color: rgba(17,24,39,.55);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* 主標：像海報的大字 */
+/* =========================
+   Luxury Vintage Title
+   ========================= */
+
+body.cnyPoster .posterHeader{
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+/* Kicker更像海報小字 */
+body.cnyPoster .posterKicker{
+  font-size: 11px;
+  letter-spacing: .28em;
+  color: rgba(17,24,39,.50);
+}
+
+/* 主標：燙金感（用漸層字色） */
+/* 標題（乾淨版，無角花、無裝飾塊） */
+body.cnyPoster .posterTitle{
+  font-size: 44px;
+  font-weight: 1000;
+  letter-spacing: .14em;
+  color: #E7A72C;                /* 實心金色 */
+  background: rgba(255,255,255,.55);
+  padding: 12px 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(231,167,44,.45);
+  box-shadow: 0 10px 28px rgba(17,24,39,.14);
+  backdrop-filter: blur(2px);
+}
+
+/* ❌ 刪除所有角花、裝飾 */
+body.cnyPoster .posterTitle::before,
+body.cnyPoster .posterTitle::after{
+  content: none !important;
+}
+
+/* 文字燙金：用 pseudo element 疊一層漸層字 */
+body.cnyPoster .posterTitle{
+  color: transparent;
+  -webkit-text-stroke: 0.5px rgba(201,129,19,.28);
+  background-image: linear-gradient(
+    180deg,
+    #FFF2C6 0%,
+    #F7D77B 18%,
+    #E7A72C 45%,
+    #C98113 75%,
+    #FFF0B5 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* 牌匾裝飾：外框第二圈（淡金） */
+body.cnyPoster .posterTitle::before{
+  content:"";
+  position:absolute;
+  inset: 6px;
+  border-radius: 22px;
+  border: 1px solid rgba(231,167,44,.26);
+  pointer-events:none;
+}
+
+/* 右上角小紅印章（復古高級感） */
+body.cnyPoster .posterTitle::after{
+  content:"呈英";
+  position:absolute;
+  right: -10px;
+  top: -12px;
+  width: 52px;
+  height: 52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 14px;
+  background: rgba(209,54,49,.10);
+  border: 1px solid rgba(209,54,49,.22);
+  color: rgba(177,15,22,.82);
+  font-weight: 1000;
+  letter-spacing: .18em;
+  font-size: 14px;
+  transform: rotate(6deg);
+  box-shadow: 0 10px 22px rgba(17,24,39,.12);
+}
+
+/* 標題下的線：更精緻 */
+body.cnyPoster .posterRule{
+  margin-top: 10px;
+  font-size: 12px;
+  letter-spacing: .10em;
+  color: rgba(17,24,39,.58);
+}
+
+/* 海報分隔線（細線） */
+body.cnyPoster .posterTitle::after{
+  content:"";
+  display:block;
+  width: 240px;
+  height: 2px;
+  margin-top: 10px;
+  background: linear-gradient(90deg, rgba(17,24,39,.70), rgba(17,24,39,0));
+}
+
+/* 規則行：像 NEW YEAR 海報的小字排列 */
+body.cnyPoster .posterRule{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  font-size: 13px;
+  font-weight: 900;
+  color: rgba(17,24,39,.60);
+  letter-spacing: .06em;
+}
+
+body.cnyPoster .posterSep{
+  color: rgba(17,24,39,.35);
+}
+
+/* 右側：像海報日期/章 */
+body.cnyPoster .posterRight{
+  text-align:right;
+  min-width: 120px;
+}
+
+body.cnyPoster .posterStamp{
+  display:inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(209,54,49,.22);
+  background: rgba(209,54,49,.06);
+  color: rgba(177,15,22,.88);
+  font-weight: 1000;
+  letter-spacing: .16em;
+  font-size: 12px;
+}
+
+body.cnyPoster .posterDate{
+  margin-top: 10px;
+  font-size: 36px;
+  font-weight: 1000;
+  letter-spacing: .12em;
+  color: rgba(17,24,39,.82);
+}
+
+
+/* =========================
+   Subtle Chunlian decoration (above board)
+   ========================= */
+
+/* 在棋盤卡片上方加裝飾：不佔位置、不擋點擊 */
+body.cnyPoster .card.cardPad{
+  position: relative;
+  overflow: hidden;   /* 讓裝飾不超出卡片 */
+}
+/* =========================
+   Poster: corner chinese elements (safe, not covering board)
+   ========================= */
+
+body.cnyPoster{
+  /* 讓內容在最上層 */
+  position: relative;
+}
+
+/* 左上/右上元素：固定在背景角落，不壓到賽馬盤 */
+body.cnyPoster::before,
+body.cnyPoster::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;         /* 背景層 */
+}
+
+/* 左上：青海波 + 麻葉(幾何) 淡金 */
+body.cnyPoster::before{
+  opacity: .42;
+  background:
+    /* 左上大圓：青海波（用 repeating-radial 模擬） */
+    radial-gradient(circle at 10% 10%,
+      rgba(231,167,44,.18) 0 120px,
+      transparent 121px),
+    repeating-radial-gradient(circle at 10% 10%,
+      rgba(231,167,44,.14) 0 2px,
+      transparent 2px 14px),
+
+    /* 左上小圓：麻葉幾何（斜線交叉） */
+    radial-gradient(circle at 22% 22%,
+      rgba(209,54,49,.10) 0 80px,
+      transparent 81px),
+    repeating-linear-gradient(60deg,
+      rgba(231,167,44,.12) 0 1px,
+      transparent 1px 10px) 0 0/240px 240px;
+  mix-blend-mode: multiply;
+}
+
+/* 右上：燈籠線條 + 菊花紋點綴（淡金） */
+body.cnyPoster::after{
+  opacity: .40;
+  background:
+    /* 右上圓形花紋底 */
+    radial-gradient(circle at 90% 12%,
+      rgba(231,167,44,.14) 0 140px,
+      transparent 141px),
+
+    /* 吊繩 */
+    linear-gradient(180deg, rgba(231,167,44,.22), rgba(231,167,44,0)) 86% 0/2px 220px no-repeat,
+
+    /* 燈籠（簡化線條感：用圓角膠囊疊出） */
+    radial-gradient(closest-side,
+      rgba(231,167,44,.18) 0 70%,
+      transparent 71%) 86% 160px/70px 90px no-repeat,
+    linear-gradient(180deg, rgba(231,167,44,.22), rgba(231,167,44,.10)) 86% 160px/70px 90px no-repeat,
+    radial-gradient(circle, rgba(231,167,44,.30) 0 3px, transparent 4px) 86% 255px/10px 10px no-repeat,
+
+    /* 祥雲（右上偏中） */
+    radial-gradient(closest-side,
+      rgba(231,167,44,.16) 0 65%,
+      transparent 66%) 74% 260px/110px 50px no-repeat,
+    radial-gradient(closest-side,
+      rgba(231,167,44,.16) 0 65%,
+      transparent 66%) 79% 270px/110px 50px no-repeat;
+  mix-blend-mode: multiply;
+}
+
+/* 讓主要內容蓋過背景元素 */
+body.cnyPoster .topBar,
+body.cnyPoster .layout{
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================
+   Title: rounded frame (poster label)
+   ========================= */
+
+body.cnyPoster .posterTitle{
+  display: inline-block;
+  padding: 12px 16px 10px;
+  border-radius: 22px;                 /* 圓角框 */
+  border: 1px solid rgba(231,167,44,.38);
+  background: rgba(255,255,255,.62);
+  box-shadow: 0 10px 24px rgba(17,24,39,.10);
+  backdrop-filter: blur(2px);
+}
+
+/* 標題下的線改短一點、淡金 */
+body.cnyPoster .posterTitle::after{
+  width: 180px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(231,167,44,.70), rgba(231,167,44,0));
+  margin-top: 10px;
+}
+
+/* =========================
+   Remove old chunlian-on-board decorations (避免壓到棋盤)
+   ========================= */
+body.cnyPoster .card.cardPad::before,
+body.cnyPoster .card.cardPad::after{
+  content:none !important;
+}
+
+/* =========================
+   Prize: horizontal compact bar
+   ========================= */
+
+body.cnyPoster .prizeRowInline{
+  justify-content: flex-start;
+}
+
+body.cnyPoster .prizeInline{
+  width: min(980px, 100%);
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.86);
+  border: 1px solid rgba(17,24,39,.10);
+  box-shadow: 0 12px 28px rgba(17,24,39,.10);
+  backdrop-filter: blur(2px);
+}
+
+body.cnyPoster .prizeInlineTitle{
+  font-weight: 1000;
+  font-size: 13px;
+  letter-spacing: .10em;
+  color: rgba(17,24,39,.70);
+  margin-bottom: 8px;
+}
+
+body.cnyPoster .prizeInlineItems{
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  row-gap: 8px;
+  align-items: baseline;
+}
+
+body.cnyPoster .prizeTag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(209,54,49,.08);
+  border: 1px solid rgba(209,54,49,.18);
+  color: rgba(177,15,22,.88);
+  font-weight: 1000;
+  font-size: 12px;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+body.cnyPoster .prizeText{
+  color: rgba(17,24,39,.72);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: .04em;
+}
+/* 名次(右側)與左下獎金區域拉開視覺關係 */
+body.cnyPoster .prizeSection{
+  margin-top: 14px;
+  position: relative;
+}
+
+/* 做一條「海報分隔線」：淡金+淡紅 */
+body.cnyPoster .prizeSection::before{
+  content:"";
+  display:block;
+  height: 1px;
+  width: min(980px, 100%);
+  margin: 0 0 12px 0;
+  background: linear-gradient(
+    90deg,
+    rgba(231,167,44,.55),
+    rgba(209,54,49,.18),
+    rgba(17,24,39,0)
+  );
+}
+
+/* 讓分隔更像海報（可有可無的小符號） */
+body.cnyPoster .rightDividerHint{
+  position:absolute;
+  top:-8px;
+  left: 0;
+  font-weight: 1000;
+  letter-spacing: .4em;
+  color: rgba(17,24,39,.20);
+  pointer-events:none;
+}
+/* =========================
+   FINAL POLISH OVERRIDES
+   ========================= */
+
+/* 1) 背景統一：避免頁面下方出現不一致的分隔感 */
+body.cnyPoster{
+  min-height: 100vh;
+  background-color: var(--paper);
+  /* 讓紙感/紅霧延伸整頁，不會到底變另一段 */
+  background-attachment: fixed;
+}
+
+/* 確保內容都在背景裝飾上方 */
+body.cnyPoster .topBar,
+body.cnyPoster .layout{
+  position: relative;
+  z-index: 1;
+}
+
+/* 2) Layout：左欄寬度改為「跟棋盤一樣寬」=> 不會在賽馬盤右側留大片空白 */
+body.cnyPoster .layout{
+  grid-template-columns: max-content 560px;  /* 左：內容寬度（棋盤），右：面板固定 */
+  gap: 16px;
+}
+
+body.cnyPoster .leftCol{
+  justify-items: start;   /* 卡片不要撐滿 */
+}
+
+/* 讓棋盤卡片「包住表格寬度」 */
+body.cnyPoster .card.cardPad{
+  width: fit-content;
+  max-width: 100%;
+}
+
+/* 若螢幕太窄：自動改上下排列 */
+@media (max-width: 1200px){
+  body.cnyPoster .layout{
+    grid-template-columns: 1fr;
+  }
+  body.cnyPoster .card.cardPad{
+    width: 100%;
+  }
+  body.cnyPoster table#grid{
+    width: 100%;
+  }
+}
+
+/* 3) 標題：復古華麗、角花、字體實填（不透明、不空白） */
+body.cnyPoster .posterHeader{
+  margin-bottom: 12px;
+}
+
+body.cnyPoster .posterTitle{
+  /* 牌匾框保留，但文字改「實填」 */
+  color: #E7A72C;                 /* 實填金色 */
+  -webkit-text-stroke: 0;         /* 移除透明字描 */
+  background: rgba(255,255,255,.62);
+  border: 1px solid rgba(231,167,44,.52);
+  border-radius: 28px;
+  padding: 14px 20px 12px;
+  box-shadow: 0 18px 46px rgba(17,24,39,.14), inset 0 0 0 2px rgba(231,167,44,.12);
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.55),
+    0 10px 22px rgba(17,24,39,.10);
+  position: relative;
+}
+
+/* 角花：用背景 SVG 放四角（不需要圖片檔） */
+body.cnyPoster .posterTitle::before{
+  content:"";
+  position:absolute;
+  inset: 6px;
+  border-radius: 22px;
+  pointer-events:none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M6 22c10-2 14-6 16-16 10 2 14 6 16 16-10 2-14 6-16 16-10-2-14-6-16-16z' fill='none' stroke='%23E7A72C' stroke-width='2' opacity='.8'/%3E%3Cpath d='M12 22c6-1 8-4 10-10 6 1 8 4 10 10-6 1-8 4-10 10-6-1-8-4-10-10z' fill='none' stroke='%23C98113' stroke-width='2' opacity='.55'/%3E%3C/svg%3E")
+      left 6px top 6px/28px 28px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg transform='translate(64,0) scale(-1,1)'%3E%3Cpath d='M6 22c10-2 14-6 16-16 10 2 14 6 16 16-10 2-14 6-16 16-10-2-14-6-16-16z' fill='none' stroke='%23E7A72C' stroke-width='2' opacity='.8'/%3E%3Cpath d='M12 22c6-1 8-4 10-10 6 1 8 4 10 10-6 1-8 4-10 10-6-1-8-4-10-10z' fill='none' stroke='%23C98113' stroke-width='2' opacity='.55'/%3E%3C/g%3E%3C/svg%3E")
+      right 6px top 6px/28px 28px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg transform='translate(0,64) scale(1,-1)'%3E%3Cpath d='M6 22c10-2 14-6 16-16 10 2 14 6 16 16-10 2-14 6-16 16-10-2-14-6-16-16z' fill='none' stroke='%23E7A72C' stroke-width='2' opacity='.8'/%3E%3Cpath d='M12 22c6-1 8-4 10-10 6 1 8 4 10 10-6 1-8 4-10 10-6-1-8-4-10-10z' fill='none' stroke='%23C98113' stroke-width='2' opacity='.55'/%3E%3C/g%3E%3C/svg%3E")
+      left 6px bottom 6px/28px 28px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg transform='translate(64,64) scale(-1,-1)'%3E%3Cpath d='M6 22c10-2 14-6 16-16 10 2 14 6 16 16-10 2-14 6-16 16-10-2-14-6-16-16z' fill='none' stroke='%23E7A72C' stroke-width='2' opacity='.8'/%3E%3Cpath d='M12 22c6-1 8-4 10-10 6 1 8 4 10 10-6 1-8 4-10 10-6-1-8-4-10-10z' fill='none' stroke='%23C98113' stroke-width='2' opacity='.55'/%3E%3C/g%3E%3C/svg%3E")
+      right 6px bottom 6px/28px 28px no-repeat;
+  border: 1px solid rgba(231,167,44,.24);
+}
+
+/* 你原本的右上小紅印章保留即可，若太搶可稍微淡一點 */
+body.cnyPoster .posterTitle::after{
+  opacity: .92;
+}
+
+/* 4) 獎金分配：橫式表格更精緻，體積更小 */
+body.cnyPoster .prizeInlineTableWrap{
+  width: fit-content;
+  max-width: 100%;
+}
+
+body.cnyPoster .prizeInlineTable{
+  border-collapse: separate;
+  border-spacing: 10px 8px; /* 留白看起來像海報資訊塊 */
+  font-weight: 900;
+  color: rgba(17,24,39,.78);
+}
+
+body.cnyPoster .prizeInlineTable th{
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(209,54,49,.08);
+  border: 1px solid rgba(209,54,49,.18);
+  color: rgba(177,15,22,.86);
+  font-weight: 1000;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  text-align: center;
+}
+
+body.cnyPoster .prizeInlineTable td{
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: rgba(17,24,39,.03);
+  border: 1px solid rgba(17,24,39,.08);
+  min-width: 160px;
+}
+
+body.cnyPoster .prizeInlineTable td .sub{
+  display:inline-block;
+  margin-top: 2px;
+  font-weight: 900;
+  color: rgba(17,24,39,.58);
+  letter-spacing: .02em;
+}
+
+/* 5) 讓左下獎金區與上方內容「更統一」：不要突兀分隔 */
+body.cnyPoster .prizeSection::before{
+  opacity: .85;
+}
+
+/* 名次（左）｜分隔線｜獎金（右）同一排 */
+body.cnyPoster .rankPrizeRow{
+  display:grid;
+  grid-template-columns: 1fr 16px 1fr;
+  gap: 14px;
+  align-items: stretch;
+  margin-top: 12px;
+}
+
+/* 中間分隔線：你說的 ~~~ 感覺（淡金＋淡紅） */
+body.cnyPoster .rpDivider{
+  width: 16px;
+  border-radius: 999px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(231,167,44,.55) 0 6px,
+      rgba(231,167,44,0) 6px 12px
+    );
+  box-shadow:
+    inset 0 0 0 1px rgba(209,54,49,.10);
+  opacity: .9;
+}
+
+/* 讓兩邊 panel 看起來一致（沿用你現在的紙卡） */
+body.cnyPoster .rankPanel,
+body.cnyPoster .prizePanel{
+  background: rgba(255,255,255,.86);
+  border: 1px solid rgba(17,24,39,.10);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 12px 28px rgba(17,24,39,.10);
+}
+
+/* 獎金內容：維持你之前那版「橫式資訊條」風格 */
+body.cnyPoster .prizeInlineItems{
+  display:flex;
+  flex-direction:column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+body.cnyPoster .prizeLine{
+  font-weight: 900;
+  font-size: 13px;
+  color: rgba(17,24,39,.72);
+  letter-spacing: .02em;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(17,24,39,.03);
+  border: 1px solid rgba(17,24,39,.08);
+}
+
+body.cnyPoster .prizeLine b{
+  color: rgba(177,15,22,.86);
+  margin-right: 8px;
+}
+
+/* 螢幕較窄時自動上下排列，分隔線消失 */
+@media (max-width: 1100px){
+  body.cnyPoster .rankPrizeRow{
+    grid-template-columns: 1fr;
+  }
+  body.cnyPoster .rpDivider{
+    display:none;
+  }
+}
+
+/* 名次 + 獎金：橫向排列 */
+body.cnyPoster .rankPrizeRow{
+  display:grid;
+  grid-template-columns: 1fr 20px 1fr;
+  gap: 12px;
+  align-items: stretch;
+  margin-top: 14px;
+}
+
+/* 左右兩塊 */
+body.cnyPoster .rankPanel,
+body.cnyPoster .prizePanel{
+  background: rgba(255,255,255,.86);
+  border: 1px solid rgba(17,24,39,.10);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 12px 28px rgba(17,24,39,.10);
+}
+
+/* ★ 淡金色直線（你要的重點） */
+body.cnyPoster .rpDivider{
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    rgba(231,167,44,0),
+    rgba(231,167,44,.65),
+    rgba(231,167,44,.35),
+    rgba(231,167,44,0)
+  );
+  box-shadow: 0 0 0 1px rgba(231,167,44,.18);
+  opacity: .95;
+}
+
+/* 獎金條列樣式 */
+body.cnyPoster .prizeInlineItems{
+  display:flex;
+  flex-direction:column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+body.cnyPoster .prizeLine{
+  font-size: 13px;
+  font-weight: 900;
+  color: rgba(17,24,39,.72);
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(17,24,39,.03);
+  border: 1px solid rgba(17,24,39,.08);
+}
+
+body.cnyPoster .prizeLine b{
+  color: rgba(177,15,22,.88);
+  margin-right: 8px;
+}
+
+/* 小螢幕自動改上下（不會擠） */
+@media (max-width: 1100px){
+  body.cnyPoster .rankPrizeRow{
+    grid-template-columns: 1fr;
+  }
+  body.cnyPoster .rpDivider{
+    display:none;
+  }
+}
+
+/* 橫式獎金排列 */
+body.cnyPoster .prizeInlineRow{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 8px;
+}
+
+body.cnyPoster .prizeItem{
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: rgba(17,24,39,.04);
+  border: 1px solid rgba(17,24,39,.10);
+  font-weight: 900;
+  font-size: 13px;
+  color: rgba(17,24,39,.75);
+  white-space: nowrap;
+}
+
+body.cnyPoster .prizeItem b{
+  color: rgba(177,15,22,.9);
+  margin-right: 6px;
+}
+/* 左欄：內容寬度跟棋盤一致（不要撐滿） */
+body.cnyPoster .layout{
+  grid-template-columns: max-content 560px; /* 左：棋盤寬度，右：面板 */
+  gap: 16px;
+}
+body.cnyPoster .leftCol{
+  justify-items: start;
+}
+
+/* 賽馬盤卡片：以內容寬度為主 */
+body.cnyPoster .card.cardPad{
+  width: fit-content;
+}
+
+/* ✅ 獎金分配：強制跟賽馬盤同寬 */
+body.cnyPoster .prizePanel,
+body.cnyPoster .prizeInline,
+body.cnyPoster .prizeWrap{
+  width: 100%;
+}
+
+body.cnyPoster .prizeRow{
+  width: 100%;
+}
+
+body.cnyPoster .leftCol .prizePanel,
+body.cnyPoster .leftCol .prizeInline,
+body.cnyPoster .leftCol .prizeWrap,
+body.cnyPoster .leftCol .prizeSection{
+  width: 100%;
+}
+
+/* 關鍵：讓「獎金區」跟「賽馬盤 card」同一個外框寬度 */
+body.cnyPoster .leftCol{
+  width: fit-content; /* 以賽馬盤寬度為基準 */
+}
+body.cnyPoster .leftCol > *{
+  width: 100%;
+}
+
+/* 右邊三塊固定在右欄 */
+body.cnyPoster .layout > div:last-child{
+  align-self: start;
+}
+/* 整體版面：左右兩欄 */
+body.cnyPoster .layout{
+  display: grid;
+  grid-template-columns: max-content 560px;
+  gap: 16px;
+  align-items: start;
+}
+
+/* 左欄：賽馬盤 + 獎金 */
+body.cnyPoster .leftCol{
+  width: fit-content;
+}
+
+/* 右欄：固定直排 */
+body.cnyPoster .rightCol{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 右欄每個區塊樣式 */
+body.cnyPoster .rightCol .panel{
+  background: rgba(255,255,255,.88);
+  border-radius: 18px;
+  border: 1px solid rgba(17,24,39,.10);
+  padding: 12px;
+  box-shadow: 0 12px 28px rgba(17,24,39,.10);
+}
+/* 左右兩欄固定 */
+body.cnyPoster .layout{
+  display: grid;
+  grid-template-columns: max-content 560px; /* 左：棋盤寬度，右：面板寬度 */
+  gap: 16px;
+  align-items: start;
+}
+
+body.cnyPoster .leftCol{
+  width: fit-content;
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+}
+
+/* 右邊三塊固定直排 */
+body.cnyPoster .rightCol{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 獎金同欄寬（跟賽馬盤一致） */
+body.cnyPoster .leftCol .prizePanel{
+  width: 100%;
+}
+
+/* 小螢幕：改上下 */
+@media (max-width: 1200px){
+  body.cnyPoster .layout{
+    grid-template-columns: 1fr;
+  }
+  body.cnyPoster .leftCol{
+    width: 100%;
+  }
+  body.cnyPoster .card.cardPad{
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+/* 右欄貼齊 layout 的右側邊界 */
+body.cnyPoster .layout{
+  width: 100%;
+  justify-content: space-between; /* 讓左右欄吃滿 */
+  grid-template-columns: max-content 560px;
+}
+
+/* 確保右欄沒有被多餘的 margin 推開 */
+body.cnyPoster .rightCol{
+  margin-left: auto;
+}
+/* 讓左欄所有區塊的左邊界一致 */
+body.cnyPoster .leftCol{
+  width: fit-content;
+  justify-items: stretch; /* 讓下面區塊撐到跟棋盤同寬 */
+}
+
+/* 棋盤卡片固定成基準寬度（= table 寬） */
+body.cnyPoster .leftCol .card.cardPad{
+  width: fit-content;
+}
+
+/* 獎金區塊：寬度直接跟棋盤卡片同寬 */
+body.cnyPoster .leftCol .prizePanel{
+  width: 100%;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 14px;  /* 對齊 cardPad 你目前是 14px */
+  padding-right: 14px;
+}
+
+/* 右欄所有 panel 外框一致（不要忽大忽小） */
+body.cnyPoster .rightCol .panel{
+  width: 100%;
+  margin: 0; /* 防止被 margin 撐開 */
+}
+
+/* 名次列表的縮排調整：讓文字起點更貼齊 panel 內容邊界 */
+body.cnyPoster #rankList{
+  padding-left: 18px; /* 你現在是 18px，可改 16px 更齊 */
+  margin-left: 0;
+}
+/* =========================================
+   1) Layout：左欄吃滿剩餘空間，右欄固定
+   ========================================= */
+body.cnyPoster .layout{
+  width: 100%;
+  grid-template-columns: 1fr 560px; /* 左：自適應撐滿，右：固定 */
+  gap: 16px;                        /* 你想更緊就改 12px */
+  align-items: start;
+}
+
+/* 左欄不要再用 fit-content 限制寬度，改成跟 layout 一樣吃滿 */
+body.cnyPoster .leftCol{
+  width: 100%;
+  justify-items: stretch;
+}
+
+/* 棋盤卡片跟獎金卡片都要撐滿左欄寬 */
+body.cnyPoster .leftCol .card.cardPad,
+body.cnyPoster .leftCol .prizePanel{
+  width: 100%;
+}
+
+/* =========================================
+   2) 放大格子：用 clamp 讓不同螢幕自動調整
+      （桌機會變大，筆電也不會爆版）
+   ========================================= */
+:root{
+  --cell-w: clamp(70px, 4.6vw, 100px);
+  --cell-h: clamp(66px, 4.2vw, 96px);
+}
+
+/* 表格要撐滿卡片寬（避免只包內容） */
+body.cnyPoster table#grid{
+  width: 100%;
+  table-layout: fixed; /* 讓每格等寬，才會「撐開填滿」 */
+}
+
+/* 左側 row head 固定寬（避免吃掉太多格子空間） */
+body.cnyPoster th.corner,
+body.cnyPoster th.rowhead{
+  width: 220px; /* 想更窄就 200，想更寬就 240 */
+}
+
+/* 表頭數字稍微置中且不擠 */
+body.cnyPoster thead th{
+  font-size: 15px;
+}
+
+/* =========================================
+   3) 獎金區：跟左欄同寬 + 第一～第六名六等分同寬
+   ========================================= */
+body.cnyPoster .prizeInlineRow{
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)); /* 六等分 */
+  gap: 10px;
+  align-items: stretch;
+}
+
+body.cnyPoster .prizeItem{
+  width: 100%;
+  text-align: center;
+  padding: 10px 10px;
+  border-radius: 14px;
+  white-space: normal;   /* 允許換行，避免小螢幕爆版 */
+  line-height: 1.25;
+}
+
+body.cnyPoster .prizeItem b{
+  display:block;         /* 第一名/第二名… 單獨一行，更整齊 */
+  margin: 0 0 4px 0;
+}
+
+/* 小螢幕自動變 3 欄，避免擠爆 */
+@media (max-width: 1100px){
+  body.cnyPoster .layout{
+    grid-template-columns: 1fr;
+  }
+  body.cnyPoster .prizeInlineRow{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+
+
+
+/* =========================
+   EXTRA OVERRIDES (merged)
+   ========================= */
+/* ===============================
+   ✅ 強制修正版面（直接貼就好）
+   =============================== */
+
+/* 左右版面配置：棋盤撐滿、右欄固定 */
+body.cnyPoster .layout{
+  display:grid !important;
+  grid-template-columns: max-content 560px !important;
+  gap: 16px;
+  align-items:start;
+}
+
+/* 左欄只吃棋盤寬度（不留空白） */
+body.cnyPoster .leftCol{
+  width: fit-content !important;
+  justify-items: start;
+}
+
+/* 棋盤卡片＝內容寬度 */
+body.cnyPoster .leftCol .card.cardPad{
+  width: fit-content !important;
+}
+
+/* 表格不要被壓縮 */
+body.cnyPoster table#grid{
+  width: max-content !important;
+  table-layout: auto !important;
+}
+
+/* ✅ 放大每格（重點） */
+:root{
+  --cell-w: 96px;
+  --cell-h: 86px;
+}
+
+/* 左側車道欄不要太寬 */
+body.cnyPoster th.corner,
+body.cnyPoster th.rowhead{
+  width: 190px !important;
+}
+
+/* ===============================
+   獎金區（跟棋盤同寬）
+   =============================== */
+
+body.cnyPoster .leftCol .prizePanel{
+  width: 100% !important;
+}
+
+/* 六等分橫排 */
+body.cnyPoster .prizeInlineRow{
+  display: grid !important;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+/* 單一獎金格 */
+body.cnyPoster .prizeItem{
+  text-align: center;
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(17,24,39,.04);
+  border: 1px solid rgba(17,24,39,.1);
+  font-weight: 900;
+}
+
+/* ===============================
+   右邊欄貼齊畫面
+   =============================== */
+body{
+  padding-right: 12px !important;
+}
+
+/* ===============================
+   小螢幕自動往下排
+   =============================== */
+@media (max-width: 1200px){
+  body.cnyPoster .layout{
+    grid-template-columns: 1fr !important;
+  }
+  body.cnyPoster .leftCol{
+    width: 100% !important;
+  }
+  body.cnyPoster .card.cardPad{
+    width: 100% !important;
+    overflow-x: auto;
+  }
+}
+
+
+
+
+
+/* =========================
+   CNY FESTIVE BACKDROP OVERRIDE (貼在 <style> 最底)
+   ========================= */
+body.cnyPoster{
+  /* 更喜慶的紅金紙感 */
+  --paper:#FFF6E8;
+  --paper2:#FFFCF6;
+
+  --cny-red:#B10F16;
+  --cny-red2:#D13631;
+  --cny-gold:#E7A72C;
+  --cny-gold2:#C98113;
+
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-attachment: fixed;
+
+  /* 背景：紙感 + 喜慶紅暈 + 金光 + 很淡的紋樣 */
+  background:
+    /* 紙纖維小顆粒（更像尾牙海報紙） */
+    radial-gradient(circle at 15% 20%, rgba(17,24,39,.05) 0 1px, transparent 2px) 0 0/18px 18px,
+    radial-gradient(circle at 55% 48%, rgba(17,24,39,.04) 0 1px, transparent 2px) 0 0/22px 22px,
+
+    /* 喜慶紅霧（中心偏右下，像紅燈籠暈染） */
+    radial-gradient(closest-side at 58% 64%,
+      rgba(209,54,49,.40) 0%,
+      rgba(209,54,49,.20) 34%,
+      rgba(209,54,49,.10) 54%,
+      rgba(209,54,49,0) 78%),
+
+    radial-gradient(closest-side at 40% 52%,
+      rgba(177,15,22,.22) 0%,
+      rgba(177,15,22,.12) 38%,
+      rgba(177,15,22,0) 72%),
+
+    /* 金色柔光（上方兩側） */
+    radial-gradient(circle at 16% 12%, rgba(231,167,44,.18) 0 16%, transparent 18%),
+    radial-gradient(circle at 86% 14%, rgba(231,167,44,.14) 0 15%, transparent 17%),
+
+    /* 底紙漸層 */
+    linear-gradient(180deg, var(--paper) 0%, var(--paper2) 62%, #ffffff 100%);
+}
+
+/* 重新定義裝飾層：更像「雲紋/窗花」但超淡，不壓內容 */
+body.cnyPoster::before,
+body.cnyPoster::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 左上：窗花幾何 + 青海波感（淡金） */
+body.cnyPoster::before{
+  opacity: .45;
+  background:
+    /* 左上大圓底 */
+    radial-gradient(circle at 9% 12%, rgba(231,167,44,.14) 0 150px, transparent 151px),
+
+    /* 青海波：repeating-radial */
+    repeating-radial-gradient(circle at 9% 12%,
+      rgba(231,167,44,.14) 0 2px,
+      transparent 2px 14px),
+
+    /* 窗花幾何：斜線交錯 */
+    repeating-linear-gradient(45deg,
+      rgba(231,167,44,.10) 0 1px,
+      transparent 1px 12px) 0 0/260px 260px,
+
+    /* 左上淡紅點綴（不要太重） */
+    radial-gradient(circle at 22% 20%, rgba(209,54,49,.10) 0 110px, transparent 111px);
+  mix-blend-mode: multiply;
+}
+
+/* 右上：祥雲（抽象）+ 金粉點（淡） */
+body.cnyPoster::after{
+  opacity: .42;
+  background:
+    /* 右上大圓底 */
+    radial-gradient(circle at 92% 12%, rgba(231,167,44,.12) 0 170px, transparent 171px),
+
+    /* 祥雲：幾個圓角膠囊疊出雲帶 */
+    radial-gradient(closest-side, rgba(231,167,44,.14) 0 65%, transparent 66%) 78% 170px/140px 60px no-repeat,
+    radial-gradient(closest-side, rgba(231,167,44,.14) 0 65%, transparent 66%) 84% 185px/140px 60px no-repeat,
+    radial-gradient(closest-side, rgba(231,167,44,.14) 0 65%, transparent 66%) 90% 175px/140px 60px no-repeat,
+
+    /* 金粉點點（很淡） */
+    radial-gradient(circle, rgba(231,167,44,.18) 0 2px, transparent 3px) 72% 92px/220px 220px repeat;
+  mix-blend-mode: multiply;
+}
+
+/* 讓主要內容永遠蓋在裝飾層上 */
+body.cnyPoster .topBar,
+body.cnyPoster .layout{
+  position: relative;
+  z-index: 1;
+}
+
+/* 右側面板更像尾牙紙卡：稍微暖一點 */
+body.cnyPoster .panel,
+body.cnyPoster .card{
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(17,24,39,.10);
+  box-shadow: 0 14px 34px rgba(17,24,39,.10);
+}
+
+/* 小強化：按鈕更喜慶（但不刺眼） */
+body.cnyPoster button{
+  background: rgba(209,54,49,.09);
+  border: 1px solid rgba(209,54,49,.18);
+  color: rgba(177,15,22,.90);
+}
+body.cnyPoster button:hover{
+  box-shadow: 0 0 0 3px rgba(231,167,44,.16);
+}
+
+
+
+/* =========================
+   FESTIVE BOOST (讓畫面更不素) - 貼在最底
+   ========================= */
+
+/* 1) 全頁金粉/亮點（很淡，整體更“活”） */
+body.cnyPoster{
+  background:
+    /* 金粉亮點（微微閃） */
+    radial-gradient(circle, rgba(231,167,44,.22) 0 1px, transparent 2px) 0 0/22px 22px,
+    radial-gradient(circle, rgba(231,167,44,.12) 0 1px, transparent 2px) 10px 14px/28px 28px,
+
+    /* 紙纖維 */
+    radial-gradient(circle at 15% 20%, rgba(17,24,39,.05) 0 1px, transparent 2px) 0 0/18px 18px,
+    radial-gradient(circle at 55% 48%, rgba(17,24,39,.04) 0 1px, transparent 2px) 0 0/22px 22px,
+
+    /* 紅暈更強一點（燈籠光） */
+    radial-gradient(closest-side at 58% 64%,
+      rgba(209,54,49,.50) 0%,
+      rgba(209,54,49,.24) 34%,
+      rgba(209,54,49,.12) 54%,
+      rgba(209,54,49,0) 78%),
+    radial-gradient(closest-side at 38% 54%,
+      rgba(177,15,22,.26) 0%,
+      rgba(177,15,22,.12) 40%,
+      rgba(177,15,22,0) 74%),
+
+    /* 金光 */
+    radial-gradient(circle at 16% 12%, rgba(231,167,44,.22) 0 16%, transparent 18%),
+    radial-gradient(circle at 86% 14%, rgba(231,167,44,.18) 0 15%, transparent 17%),
+
+    linear-gradient(180deg, var(--paper) 0%, var(--paper2) 62%, #ffffff 100%);
+}
+
+/* 2) 角落加“淡淡煙火線條”與“紅燈籠光圈”（不擋內容） */
+body.cnyPoster::after{
+  opacity: .52;
+  background:
+    /* 右上燈籠光圈（淡紅） */
+    radial-gradient(circle at 92% 12%,
+      rgba(209,54,49,.18) 0 110px,
+      rgba(209,54,49,.10) 111px 180px,
+      transparent 181px),
+
+    /* 右上金色雲帶（原本的雲保留/更立體） */
+    radial-gradient(closest-side, rgba(231,167,44,.16) 0 65%, transparent 66%) 78% 170px/140px 60px no-repeat,
+    radial-gradient(closest-side, rgba(231,167,44,.16) 0 65%, transparent 66%) 84% 185px/140px 60px no-repeat,
+    radial-gradient(closest-side, rgba(231,167,44,.16) 0 65%, transparent 66%) 90% 175px/140px 60px no-repeat,
+
+    /* 煙火線條（超淡） */
+    conic-gradient(from 210deg at 88% 22%,
+      rgba(231,167,44,.0) 0 18deg,
+      rgba(231,167,44,.18) 18deg 19deg,
+      rgba(231,167,44,.0) 19deg 42deg,
+      rgba(231,167,44,.16) 42deg 43deg,
+      rgba(231,167,44,.0) 43deg 360deg) 88% 22%/260px 260px no-repeat,
+
+    /* 金粉點點 */
+    radial-gradient(circle, rgba(231,167,44,.18) 0 2px, transparent 3px) 72% 92px/220px 220px repeat;
+}
+
+/* 3) 卡片邊緣更“高級”一點：淡金內框 */
+body.cnyPoster .panel,
+body.cnyPoster .card{
+  box-shadow: 0 16px 38px rgba(17,24,39,.10);
+  position: relative;
+}
+body.cnyPoster .panel::before,
+body.cnyPoster .card::before{
+  content:"";
+  position:absolute;
+  inset: 6px;
+  border-radius: inherit;
+  pointer-events:none;
+  border: 1px solid rgba(231,167,44,.18);
+}
+
+/* 4) 標題牌匾更亮眼：加一點金色光暈 */
+body.cnyPoster .posterTitle{
+  box-shadow:
+    0 18px 46px rgba(17,24,39,.14),
+    0 0 0 6px rgba(231,167,44,.08),
+    inset 0 0 0 2px rgba(231,167,44,.12);
+}
+
+
+
+
+
+/* =========================
+   CNY LUX THEME (套海報金紅)
+   直接貼在 style 最底部
+   ========================= */
+body.cnyLux{
+  --cny-red:#8F0E12;
+  --cny-red2:#B10F16;
+  --cny-gold:#F6D27A;
+  --cny-gold2:#E7A72C;
+  --paper:#FFF4DE;
+
+  /* 整頁大背景：換成你的喜慶圖 */
+  background:
+    radial-gradient(circle at 20% 10%, rgba(246,210,122,.22), transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(246,210,122,.18), transparent 42%),
+    url("cny-bg.webp") center/cover fixed no-repeat;
+  color:#2a1b10;
+}
+
+/* 金粉粒子 overlay（不用圖片，純 CSS） */
+body.cnyLux::before{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle, rgba(255,232,160,.18) 0 1px, transparent 2px) 0 0/22px 22px,
+    radial-gradient(circle, rgba(255,255,255,.10) 0 1px, transparent 2px) 10px 10px/28px 28px;
+  mix-blend-mode: screen;
+  opacity:.7;
+  z-index:0;
+}
+
+/* 讓內容浮到 overlay 上面 */
+body.cnyLux .topBar,
+body.cnyLux .layout{
+  position:relative;
+  z-index:1;
+}
+
+/* 全部卡片：米金宣紙 + 燙金邊框 */
+body.cnyLux .card,
+body.cnyLux .panel{
+  background:
+    linear-gradient(180deg, rgba(255,244,222,.92), rgba(255,253,246,.88));
+  border: 1px solid rgba(246,210,122,.55);
+  box-shadow:
+    0 18px 60px rgba(0,0,0,.18),
+    inset 0 0 0 2px rgba(255,255,255,.30);
+  backdrop-filter: blur(2px);
+}
+
+/* 棋盤外框：做成相框感 */
+body.cnyLux .card.cardPad{
+  border-radius: 22px;
+  padding: 16px;
+  border: 1px solid rgba(246,210,122,.75);
+  box-shadow:
+    0 22px 80px rgba(0,0,0,.22),
+    inset 0 0 0 3px rgba(231,167,44,.18);
+}
+
+/* 棋盤格線更金 */
+body.cnyLux th, body.cnyLux td{
+  border-color: rgba(231,167,44,.28);
+}
+
+/* 命運門/保護區/終點更喜慶 */
+body.cnyLux td.gate{
+  background: rgba(177,15,22,.10);
+}
+body.cnyLux td.safe{
+  background: rgba(246,210,122,.16);
+}
+body.cnyLux td.finish{
+  background: linear-gradient(135deg, #FFF2C6 0%, #F7D77B 25%, #E7A72C 60%, #C98113 100%);
+  color:#3a2200;
+}
+
+/* hover 改金紅光暈 */
+body.cnyLux td:hover{
+  box-shadow:
+    inset 0 0 0 2px rgba(231,167,44,.65),
+    0 0 0 6px rgba(177,15,22,.14);
+}
+
+/* 標題：燙金實心 + 陰影（尾牙感） */
+body.cnyLux .posterTitle{
+  color: #F7D77B;
+  background: rgba(60,8,10,.35);
+  border: 1px solid rgba(246,210,122,.55);
+  text-shadow: 0 2px 0 rgba(0,0,0,.25), 0 10px 28px rgba(0,0,0,.20);
+}
+
+/* 右上 slogan 也拉出金感 */
+body.cnyLux .posterRight .posterDate{
+  color: rgba(255,244,222,.92);
+  text-shadow: 0 2px 0 rgba(0,0,0,.25);
+}
+
+/* 按鈕/籤條：紅底金邊 */
+body.cnyLux button{
+  background: linear-gradient(180deg, rgba(177,15,22,.16), rgba(177,15,22,.08));
+  border: 1px solid rgba(246,210,122,.35);
+  color: rgba(143,14,18,.95);
+}
+body.cnyLux button:hover{
+  box-shadow: 0 0 0 3px rgba(246,210,122,.18);
+}
+
+/* 成員 tag 更像紅金籤 */
+body.cnyLux #memberPool button{
+  background: linear-gradient(180deg, rgba(177,15,22,.20), rgba(177,15,22,.10));
+  border: 1px solid rgba(246,210,122,.35);
+  color: rgba(143,14,18,.95);
+}
+
+/* 獎金區：強制 6 等分（很關鍵） */
+body.cnyLux .prizeInlineRow{
+  display:grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+body.cnyLux .prizeItem{
+  text-align:center;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,244,222,.92), rgba(255,253,246,.86));
+  border: 1px solid rgba(246,210,122,.45);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.25);
+}
+body.cnyLux .prizeItem b{
+  color: rgba(143,14,18,.95);
+}
+
+最底)
+   ========================= */
+body.cnyPoster{
+  /* 更喜慶的紅金紙感 */
+  --paper:#FFF6E8;
+  --paper2:#FFFCF6;
+
+  --cny-red:#B10F16;
+  --cny-red2:#D13631;
+  --cny-gold:#E7A72C;
+  --cny-gold2:#C98113;
+
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-attachment: fixed;
+
+  /* 背景：紙感 + 喜慶紅暈 + 金光 + 很淡的紋樣 */
+  background:
+    /* 紙纖維小顆粒（更像尾牙海報紙） */
+    radial-gradient(circle at 15% 20%, rgba(17,24,39,.05) 0 1px, transparent 2px) 0 0/18px 18px,
+    radial-gradient(circle at 55% 48%, rgba(17,24,39,.04) 0 1px, transparent 2px) 0 0/22px 22px,
+
+    /* 喜慶紅霧（中心偏右下，像紅燈籠暈染） */
+    radial-gradient(closest-side at 58% 64%,
+      rgba(209,54,49,.40) 0%,
+      rgba(209,54,49,.20) 34%,
+      rgba(209,54,49,.10) 54%,
+      rgba(209,54,49,0) 78%),
+
+    radial-gradient(closest-side at 40% 52%,
+      rgba(177,15,22,.22) 0%,
+      rgba(177,15,22,.12) 38%,
+      rgba(177,15,22,0) 72%),
+
+    /* 金色柔光（上方兩側） */
+    radial-gradient(circle at 16% 12%, rgba(231,167,44,.18) 0 16%, transparent 18%),
+    radial-gradient(circle at 86% 14%, rgba(231,167,44,.14) 0 15%, transparent 17%),
+
+    /* 底紙漸層 */
+    linear-gradient(180deg, var(--paper) 0%, var(--paper2) 62%, #ffffff 100%);
+}
+
+/* 重新定義裝飾層：更像「雲紋/窗花」但超淡，不壓內容 */
+body.cnyPoster::before,
+body.cnyPoster::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 左上：窗花幾何 + 青海波感（淡金） */
+body.cnyPoster::before{
+  opacity: .45;
+  background:
+    /* 左上大圓底 */
+    radial-gradient(circle at 9% 12%, rgba(231,167,44,.14) 0 150px, transparent 151px),
+
+    /* 青海波：repeating-radial */
+    repeating-radial-gradient(circle at 9% 12%,
+      rgba(231,167,44,.14) 0 2px,
+      transparent 2px 14px),
+
+    /* 窗花幾何：斜線交錯 */
+    repeating-linear-gradient(45deg,
+      rgba(231,167,44,.10) 0 1px,
+      transparent 1px 12px) 0 0/260px 260px,
+
+    /* 左上淡紅點綴（不要太重） */
+    radial-gradient(circle at 22% 20%, rgba(209,54,49,.10) 0 110px, transparent 111px);
+  mix-blend-mode: multiply;
+}
+
+/* 右上：祥雲（抽象）+ 金粉點（淡） */
+body.cnyPoster::after{
+  opacity: .42;
+  background:
+    /* 右上大圓底 */
+    radial-gradient(circle at 92% 12%, rgba(231,167,44,.12) 0 170px, transparent 171px),
+
+    /* 祥雲：幾個圓角膠囊疊出雲帶 */
+    radial-gradient(closest-side, rgba(231,167,44,.14) 0 65%, transparent 66%) 78% 170px/140px 60px no-repeat,
+    radial-gradient(closest-side, rgba(231,167,44,.14) 0 65%, transparent 66%) 84% 185px/140px 60px no-repeat,
+    radial-gradient(closest-side, rgba(231,167,44,.14) 0 65%, transparent 66%) 90% 175px/140px 60px no-repeat,
+
+    /* 金粉點點（很淡） */
+    radial-gradient(circle, rgba(231,167,44,.18) 0 2px, transparent 3px) 72% 92px/220px 220px repeat;
+  mix-blend-mode: multiply;
+}
+
+/* 讓主要內容永遠蓋在裝飾層上 */
+body.cnyPoster .topBar,
+body.cnyPoster .layout{
+  position: relative;
+  z-index: 1;
+}
+
+/* 右側面板更像尾牙紙卡：稍微暖一點 */
+body.cnyPoster .panel,
+body.cnyPoster .card{
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(17,24,39,.10);
+  box-shadow: 0 14px 34px rgba(17,24,39,.10);
+}
+
+/* 小強化：按鈕更喜慶（但不刺眼） */
+body.cnyPoster button{
+  background: rgba(209,54,49,.09);
+  border: 1px solid rgba(209,54,49,.18);
+  color: rgba(177,15,22,.90);
+}
+body.cnyPoster button:hover{
+  box-shadow: 0 0 0 3px rgba(231,167,44,.16);
+}
+
+
+
+/* =========================
+   FESTIVE BOOST (讓畫面更不素) - 貼在最底
+   ========================= */
+
+/* 1) 全頁金粉/亮點（很淡，整體更“活”） */
+body.cnyPoster{
+  background:
+    /* 金粉亮點（微微閃） */
+    radial-gradient(circle, rgba(231,167,44,.22) 0 1px, transparent 2px) 0 0/22px 22px,
+    radial-gradient(circle, rgba(231,167,44,.12) 0 1px, transparent 2px) 10px 14px/28px 28px,
+
+    /* 紙纖維 */
+    radial-gradient(circle at 15% 20%, rgba(17,24,39,.05) 0 1px, transparent 2px) 0 0/18px 18px,
+    radial-gradient(circle at 55% 48%, rgba(17,24,39,.04) 0 1px, transparent 2px) 0 0/22px 22px,
+
+    /* 紅暈更強一點（燈籠光） */
+    radial-gradient(closest-side at 58% 64%,
+      rgba(209,54,49,.50) 0%,
+      rgba(209,54,49,.24) 34%,
+      rgba(209,54,49,.12) 54%,
+      rgba(209,54,49,0) 78%),
+    radial-gradient(closest-side at 38% 54%,
+      rgba(177,15,22,.26) 0%,
+      rgba(177,15,22,.12) 40%,
+      rgba(177,15,22,0) 74%),
+
+    /* 金光 */
+    radial-gradient(circle at 16% 12%, rgba(231,167,44,.22) 0 16%, transparent 18%),
+    radial-gradient(circle at 86% 14%, rgba(231,167,44,.18) 0 15%, transparent 17%),
+
+    linear-gradient(180deg, var(--paper) 0%, var(--paper2) 62%, #ffffff 100%);
+}
+
+/* 2) 角落加“淡淡煙火線條”與“紅燈籠光圈”（不擋內容） */
+body.cnyPoster::after{
+  opacity: .52;
+  background:
+    /* 右上燈籠光圈（淡紅） */
+    radial-gradient(circle at 92% 12%,
+      rgba(209,54,49,.18) 0 110px,
+      rgba(209,54,49,.10) 111px 180px,
+      transparent 181px),
+
+    /* 右上金色雲帶（原本的雲保留/更立體） */
+    radial-gradient(closest-side, rgba(231,167,44,.16) 0 65%, transparent 66%) 78% 170px/140px 60px no-repeat,
+    radial-gradient(closest-side, rgba(231,167,44,.16) 0 65%, transparent 66%) 84% 185px/140px 60px no-repeat,
+    radial-gradient(closest-side, rgba(231,167,44,.16) 0 65%, transparent 66%) 90% 175px/140px 60px no-repeat,
+
+    /* 煙火線條（超淡） */
+    conic-gradient(from 210deg at 88% 22%,
+      rgba(231,167,44,.0) 0 18deg,
+      rgba(231,167,44,.18) 18deg 19deg,
+      rgba(231,167,44,.0) 19deg 42deg,
+      rgba(231,167,44,.16) 42deg 43deg,
+      rgba(231,167,44,.0) 43deg 360deg) 88% 22%/260px 260px no-repeat,
+
+    /* 金粉點點 */
+    radial-gradient(circle, rgba(231,167,44,.18) 0 2px, transparent 3px) 72% 92px/220px 220px repeat;
+}
+
+/* 3) 卡片邊緣更“高級”一點：淡金內框 */
+body.cnyPoster .panel,
+body.cnyPoster .card{
+  box-shadow: 0 16px 38px rgba(17,24,39,.10);
+  position: relative;
+}
+body.cnyPoster .panel::before,
+body.cnyPoster .card::before{
+  content:"";
+  position:absolute;
+  inset: 6px;
+  border-radius: inherit;
+  pointer-events:none;
+  border: 1px solid rgba(231,167,44,.18);
+}
+
+/* 4) 標題牌匾更亮眼：加一點金色光暈 */
+body.cnyPoster .posterTitle{
+  box-shadow:
+    0 18px 46px rgba(17,24,39,.14),
+    0 0 0 6px rgba(231,167,44,.08),
+    inset 0 0 0 2px rgba(231,167,44,.12);
+}
+
+
+
+
+
+/* =========================
+   CNY LUX THEME (套海報金紅)
+   直接貼在 style 最底部
+   ========================= */
+body.cnyLux{
+  --cny-red:#8F0E12;
+  --cny-red2:#B10F16;
+  --cny-gold:#F6D27A;
+  --cny-gold2:#E7A72C;
+  --paper:#FFF4DE;
+
+  /* 整頁大背景：換成你的喜慶圖 */
+  background:
+    radial-gradient(circle at 20% 10%, rgba(246,210,122,.22), transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(246,210,122,.18), transparent 42%),
+    url("cny-bg.webp") center/cover fixed no-repeat;
+  color:#2a1b10;
+}
+
+/* 金粉粒子 overlay（不用圖片，純 CSS） */
+body {
+  background: url("./bg_B.png") center / cover no-repeat fixed;
+}
+
+.main-wrap {
+  background: rgba(255,255,255,0.88);
+  border-radius: 18px;
+}
+
+/* 超淡裝飾粒子 */
+body.cnyLux::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle, rgba(255,215,140,.08) 1px, transparent 2px) 0 0/40px 40px;
+  opacity:.01;
+}
+
+/* 讓內容浮到 overlay 上面 */
+body.cnyLux .topBar,
+body.cnyLux .layout{
+  position:relative;
+  z-index:1;
+}
+
+/* 全部卡片：米金宣紙 + 燙金邊框 */
+body.cnyLux .card,
+body.cnyLux .panel{
+  background:
+    linear-gradient(180deg, rgba(255,244,222,.92), rgba(255,253,246,.88));
+  border: 1px solid rgba(246,210,122,.55);
+  box-shadow:
+    0 18px 60px rgba(0,0,0,.18),
+    inset 0 0 0 2px rgba(255,255,255,.30);
+  backdrop-filter: blur(2px);
+}
+
+/* 棋盤外框：做成相框感 */
+body.cnyLux .card.cardPad{
+  border-radius: 22px;
+  padding: 16px;
+  border: 1px solid rgba(246,210,122,.75);
+  box-shadow:
+    0 22px 80px rgba(0,0,0,.22),
+    inset 0 0 0 3px rgba(231,167,44,.18);
+}
+
+/* 棋盤格線更金 */
+body.cnyLux th, body.cnyLux td{
+  border-color: rgba(231,167,44,.28);
+}
+
+/* 命運門/保護區/終點更喜慶 */
+body.cnyLux td.gate{
+  background: rgba(177,15,22,.10);
+}
+body.cnyLux td.safe{
+  background: rgba(246,210,122,.16);
+}
+body.cnyLux td.finish{
+  background: linear-gradient(135deg, #FFF2C6 0%, #F7D77B 25%, #E7A72C 60%, #C98113 100%);
+  color:#3a2200;
+}
+
+/* hover 改金紅光暈 */
+body.cnyLux td:hover{
+  box-shadow:
+    inset 0 0 0 2px rgba(231,167,44,.65),
+    0 0 0 6px rgba(177,15,22,.14);
+}
+
+/* 標題：燙金實心 + 陰影（尾牙感） */
+body.cnyLux .posterTitle{
+  color: #F7D77B;
+  background: rgba(60,8,10,.35);
+  border: 1px solid rgba(246,210,122,.55);
+  text-shadow: 0 2px 0 rgba(0,0,0,.25), 0 10px 28px rgba(0,0,0,.20);
+}
+
+/* 右上 slogan 也拉出金感 */
+body.cnyLux .posterRight .posterDate{
+  color: rgba(255,244,222,.92);
+  text-shadow: 0 2px 0 rgba(0,0,0,.25);
+}
+
+/* 按鈕/籤條：紅底金邊 */
+body.cnyLux button{
+  background: linear-gradient(180deg, rgba(177,15,22,.16), rgba(177,15,22,.08));
+  border: 1px solid rgba(246,210,122,.35);
+  color: rgba(143,14,18,.95);
+}
+body.cnyLux button:hover{
+  box-shadow: 0 0 0 3px rgba(246,210,122,.18);
+}
+
+/* 成員 tag 更像紅金籤 */
+body.cnyLux #memberPool button{
+  background: linear-gradient(180deg, rgba(177,15,22,.20), rgba(177,15,22,.10));
+  border: 1px solid rgba(246,210,122,.35);
+  color: rgba(143,14,18,.95);
+}
+
+/* 獎金區：強制 6 等分（很關鍵） */
+body.cnyLux .prizeInlineRow{
+  display:grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+body.cnyLux .prizeItem{
+  text-align:center;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,244,222,.92), rgba(255,253,246,.86));
+  border: 1px solid rgba(246,210,122,.45);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.25);
+}
+body.cnyLux .prizeItem b{
+  color: rgba(143,14,18,.95);
+}
+
+
+/* ✅ FIX: Modal 永遠在最上層（命運門不會被蓋住） */
+.backdrop{
+  position: fixed !important;
+  inset: 0 !important;
+  display: none;               /* JS 會切成 flex */
+  align-items: center;
+  justify-content: center;
+  background: rgba(11,18,32,.52) !important;
+  z-index: 999999 !important;  /* 超高層級 */
+}
+
+.modal{
+  position: relative !important;
+  z-index: 1000000 !important; /* 比 backdrop 更高 */
+}
+
+/* ✅ 任何背景裝飾層都必須在最底，且不吃點擊 */
+body::before,
+body::after{
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+/* ✅ 你的主要內容要在裝飾層上面，但不用很高 */
+.topBar, .layout{
+  position: relative;
+  z-index: 1;
+}
+/* ✅ 背景改成 B（只換底圖，不動你整體設計） */
+body{
+  background:
+    /* 讀性遮罩（上層） */
+    linear-gradient(180deg,
+      rgba(255,246,233,.82) 0%,
+      rgba(255,253,249,.92) 55%,
+      rgba(255,255,255,.96) 100%
+    ),
+    /* B 底圖（下層） */
+    url("bg_B.png") center/cover no-repeat fixed !important;
+
+  background-color: #FFF6E8;
+}
+/* ✅ 最終強制背景（放在整個 CSS 最底） */
+body.cnyPoster{
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(255,246,233,.82) 0%,
+      rgba(255,253,249,.92) 55%,
+      rgba(255,255,255,.96) 100%
+    ),
+    url("./bg_B.png") !important;
+
+  background-position: 0 0, center !important;
+  background-size: auto, cover !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: fixed, fixed !important;
+  background-color: #FFF6E8 !important;
+}
+
+
+
+
+
+
+
+
+
+/* ✅ 最終強制背景：請放在整個 <style> 最底 */
+body.cnyPoster{
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,246,233,.82) 0%,
+      rgba(255,253,249,.92) 55%,
+      rgba(255,255,255,.96) 100%
+    ),
+    url("./bg_B.png") center/cover no-repeat fixed !important;
+
+  background-color: #FFF6E8 !important;
+}
+
+
+
+
+
+
+/* ✅ 無霧版本（最清楚、最有年味） */
+body.cnyPoster {
+  min-height: 100vh;
+  background:
+    url("./bg_B.png") center / cover no-repeat fixed;
+}
+
+
+
+
+
+
+
+/* ✅ 讓 bg_B 變成「最上層背景圖層」（但仍在內容下面） */
+body.cnyPoster{
+  position: relative;
+  background: none !important;         /* 把你原本那些霧/漸層背景先關掉 */
+}
+
+/* bg_B 圖層：清楚、完整 */
+body.cnyPoster::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background: url("./bg_B.png") center/cover no-repeat fixed;
+  opacity: 1 !important;              /* ✅ 圖不要淡 */
+  z-index: 0;                          /* 背景層 */
+  pointer-events: none;
+}
+
+/* ✅ 你原本的霧/裝飾層：直接關掉（或改成更底層） */
+body.cnyPoster::after{
+  content: none !important;
+}
+
+/* ✅ 內容一定要在背景圖上面 */
+body.cnyPoster .topBar,
+body.cnyPoster .layout,
+body.cnyPoster .backdrop{
+  position: relative;
+  z-index: 2;
+}
+
+
+
+
+background: rgba(255,255,255,.38);
+
+
+
+
+/* ================================
+   左上主標（呈英繁華賽馬盤）
+   ================================ */
+.posterTitle{
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  color: #FFD77A !important;
+  font-weight: 900;
+  letter-spacing: .18em;
+
+  /* 讓字浮起來 */
+  -webkit-text-stroke: 1px rgba(120,60,0,.45);
+  text-shadow:
+    0 2px 2px rgba(80,30,0,.45),
+    0 6px 16px rgba(0,0,0,.35),
+    0 0 20px rgba(255,200,120,.45);
+
+  padding: 0 !important;
+}
+
+/* 小副標（公司名 / 說明文字） */
+.posterKicker{
+  color: rgba(255,255,255,.85);
+  text-shadow:
+    0 1px 2px rgba(0,0,0,.35),
+    0 0 10px rgba(0,0,0,.25);
+  letter-spacing: .28em;
+}
+
+/* ================================
+   右上標語（駿馬奔騰開新局…）
+   ================================ */
+.posterDate{
+  background: none !important;
+  border: none !important;
+
+  color: #FFF2C8 !important;
+  font-weight: 800;
+  letter-spacing: .12em;
+
+  -webkit-text-stroke: 1px rgba(0,0,0,.35);
+  text-shadow:
+    0 2px 3px rgba(0,0,0,.45),
+    0 6px 18px rgba(0,0,0,.35),
+    0 0 16px rgba(255,190,90,.35);
+
+  padding: 6px 10px;
+}
+
+/* 右上小紅章（如果有） */
+.posterStamp{
+  background: rgba(160,20,20,.18);
+  border: 1px solid rgba(255,200,120,.25);
+  color: #FFE6B0;
+  box-shadow: 0 6px 16px rgba(0,0,0,.35);
+}
+
+
+
+
+
+
+
+/* =========================
+   TOP HEADER FINAL (只管左上/右上)
+   貼在 <style> 最底
+   ========================= */
+
+/* 確保標題永遠在最上層（不被背景裝飾壓） */
+body.cnyPoster .topBar.posterHeader{
+  position: relative;
+  z-index: 5;
+}
+
+/* 左上：公司名（kicker） */
+body.cnyPoster .posterKicker{
+  color: rgba(255,255,255,.75);
+  text-shadow:
+    0 2px 10px rgba(0,0,0,.35),
+    0 1px 0 rgba(0,0,0,.25);
+}
+
+/* 左上：主標「呈英繁華賽馬盤」——不要白底框，改用描邊+陰影讓字突出 */
+body.cnyPoster .posterTitle{
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+
+  /* 金色字 */
+  color: #F7D77B !important;
+
+  /* 描邊讓亮背景也清楚 */
+  -webkit-text-stroke: 2px rgba(0,0,0,.28);
+  paint-order: stroke fill;
+
+  /* 陰影/光暈 */
+  text-shadow:
+    0 10px 26px rgba(0,0,0,.35),
+    0 2px 0 rgba(0,0,0,.18),
+    0 0 18px rgba(231,167,44,.22);
+}
+
+/* 左上：規則小字也加陰影，避免吃背景 */
+body.cnyPoster .posterRule,
+body.cnyPoster .posterRule span{
+  color: rgba(255,255,255,.82);
+  text-shadow: 0 2px 10px rgba(0,0,0,.30);
+}
+body.cnyPoster .posterSep{
+  color: rgba(255,255,255,.45);
+}
+
+/* 右上：大標語（你說這個已經很好，只補強可讀性） */
+body.cnyPoster .posterRight .posterDate{
+  color: rgba(255,255,255,.92);
+  text-shadow:
+    0 10px 28px rgba(0,0,0,.40),
+    0 2px 0 rgba(0,0,0,.22);
+}
+
+/* ✅ 右上小標「馬年行大運」：做成跟成員按鈕一樣的 pill 感 */
+body.cnyPoster .posterStamp{
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 16px;
+
+font-size: 18px;          /* ✅ 這一行就是字體大小 */
+
+  background: rgba(255, 232, 232, .70);          /* 淡粉底 */
+  border: 1px solid rgba(209, 54, 49, .28);      /* 紅邊 */
+  color: rgba(177, 15, 22, .95);                 /* 紅字 */
+  font-weight: 1000;
+  letter-spacing: .18em;
+
+  box-shadow:
+    0 10px 22px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.55);
+  backdrop-filter: blur(2px);
+}
+
+/* 如果右上小標旁邊背景太亮，再加一點陰影 */
+body.cnyPoster .posterStamp{
+  text-shadow: 0 1px 0 rgba(255,255,255,.35);
+}
+
+
+
+
+/* =========================================================
+   FINAL BOARD LOOK — 尾牙不廉價 + 遊戲感（不動 JS / HTML）
+   👉 貼在 <style> 最底
+   ========================================================= */
+
+/* 0) 小修：表格要吃滿圓角，不露白邊 */
+.card.cardPad{
+  overflow:hidden;
+}
+
+/* 1) 棋盤「舞台底」：像桌遊板，不是 Excel */
+table#grid{
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background:
+    /* 暖紙底 */
+    linear-gradient(180deg, rgba(255,252,246,.92), rgba(255,247,235,.96)),
+    /* 很淡金粉點點（不會廉價） */
+    radial-gradient(circle, rgba(231,167,44,.10) 0 1px, transparent 2px) 0 0/26px 26px,
+    radial-gradient(circle, rgba(231,167,44,.07) 0 1px, transparent 2px) 12px 16px/34px 34px;
+}
+
+/* 中央聚光（舞台感） */
+table#grid::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 55% 55%,
+      rgba(231,167,44,.16) 0%,
+      rgba(231,167,44,.08) 35%,
+      transparent 70%);
+}
+
+/* 2) 格線不要太工程：變成「印刷感」 */
+table#grid th,
+table#grid td{
+  border-color: rgba(17,24,39,.12) !important;
+}
+
+/* 3) 每格：微立體、微光澤（桌遊卡面） */
+table#grid td{
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.82),
+      rgba(255,246,232,.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.65);
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease, filter .12s ease;
+  position: relative;
+}
+
+/* 4) Hover：金紅柔光（遊戲感），不會刺眼 */
+table#grid td:hover{
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 0 0 2px rgba(231,167,44,.38),
+    0 10px 18px rgba(17,24,39,.10);
+  filter: saturate(1.02);
+  z-index: 2;
+}
+
+/* 5) 賽道節奏：每 3 格一個「節點」（比整排淡紅更像賽道） */
+/* 你表格每列第 1 格是 rowhead，所以 td 是第 1~18；用 nth-child 做節奏 */
+table#grid tbody tr td:nth-child(4),
+table#grid tbody tr td:nth-child(7),
+table#grid tbody tr td:nth-child(10),
+table#grid tbody tr td:nth-child(13),
+table#grid tbody tr td:nth-child(16){
+  background:
+    linear-gradient(180deg,
+      rgba(255,236,218,.88),
+      rgba(255,222,196,.92));
+  box-shadow:
+    inset 0 0 0 1px rgba(209,54,49,.10),
+    inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+/* 節點 hover 更像「踩到點」 */
+table#grid tbody tr td:nth-child(4):hover,
+table#grid tbody tr td:nth-child(7):hover,
+table#grid tbody tr td:nth-child(10):hover,
+table#grid tbody tr td:nth-child(13):hover,
+table#grid tbody tr td:nth-child(16):hover{
+  box-shadow:
+    inset 0 0 0 2px rgba(209,54,49,.22),
+    0 10px 18px rgba(17,24,39,.10);
+}
+
+/* 6) 命運門（你已有 gate class）：改成更「事件格」的質感 */
+table#grid td.gate{
+  background:
+    linear-gradient(180deg,
+      rgba(255,232,232,.78),
+      rgba(255,225,225,.88));
+  box-shadow:
+    inset 0 0 0 1px rgba(209,54,49,.16);
+}
+table#grid td.gate:hover{
+  box-shadow:
+    inset 0 0 0 2px rgba(209,54,49,.38),
+    0 10px 18px rgba(17,24,39,.10);
+}
+
+/* 7) 保護區（15~17 safe）：變成「護盾金」而不是淡藍，尾牙更搭 */
+table#grid td.safe{
+  background:
+    linear-gradient(180deg,
+      rgba(255,246,222,.86),
+      rgba(255,236,196,.94)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(231,167,44,.18);
+}
+table#grid td.safe:hover{
+  box-shadow:
+    inset 0 0 0 2px rgba(231,167,44,.40),
+    0 10px 18px rgba(17,24,39,.10);
+}
+
+/* 8) 終點（18 finish）：做成「獎盃金」+ 光暈，不廉價 */
+table#grid td.finish{
+  background:
+    radial-gradient(circle at 20% 25%,
+      rgba(255,255,255,.65) 0%,
+      rgba(255,255,255,0) 35%),
+    linear-gradient(135deg,
+      #FFF2C6 0%,
+      #F7D77B 22%,
+      #E7A72C 58%,
+      #C98113 100%) !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.55),
+    0 0 18px rgba(231,167,44,.28);
+}
+
+/* 終點 hover 更像「進終點」 */
+table#grid td.finish:hover{
+  box-shadow:
+    inset 0 0 0 3px rgba(255,255,255,.75),
+    0 0 26px rgba(231,167,44,.38),
+    0 14px 20px rgba(17,24,39,.12);
+}
+
+/* 9) 表頭與左側隊名列：變成印刷板感（不要太藍） */
+table#grid thead th{
+  background: rgba(17,24,39,.04) !important;
+  color: rgba(17,24,39,.72) !important;
+  font-weight: 1000;
+}
+
+table#grid th.corner,
+table#grid th.rowhead{
+  background: rgba(17,24,39,.04) !important;
+}
+
+/* 左側隊名區塊：更像牌卡 */
+table#grid th.rowhead{
+  box-shadow: inset 0 0 0 1px rgba(231,167,44,.12);
+}
+table#grid th.rowhead:hover{
+  box-shadow:
+    inset 0 0 0 2px rgba(231,167,44,.22),
+    0 10px 18px rgba(17,24,39,.08);
+}
+
+/* 10) 馬 icon：讓它像「棋子」更立體 */
+.horseImg{
+  filter:
+    drop-shadow(0 10px 14px rgba(17,24,39,.18))
+    drop-shadow(0 2px 0 rgba(255,255,255,.35));
+  transform: translateY(-1px);
+}
+
+/* 11) 小加分：格子點擊時的視覺回饋（不影響 JS） */
+table#grid td:active{
+  transform: translateY(0px) scale(.985);
+  box-shadow:
+    inset 0 0 0 2px rgba(231,167,44,.22),
+    0 6px 14px rgba(17,24,39,.10);
+}
+
+
+
+
+/* ===============================
+   命運門 Gate：高級遊戲感特效（只動 CSS）
+   貼在 <style> 最底部
+   =============================== */
+
+@keyframes gateShimmer{
+  0%   { background-position: 0% 0%, 0% 0%, 0 0; }
+  50%  { background-position: 120% 0%, -60% 0%, 0 0; }
+  100% { background-position: 240% 0%, -120% 0%, 0 0; }
+}
+
+@keyframes gatePulse{
+  0%,100% { transform: translateY(0); filter: saturate(1); }
+  50%     { transform: translateY(-1px); filter: saturate(1.05); }
+}
+
+table#grid td.gate{
+  position: relative;
+  overflow: hidden;
+
+  /* 底色：統一命運門淡紅（保留你想要的色感） */
+  background:
+    /* 金粉絲帶（很淡） */
+    linear-gradient(115deg,
+      rgba(231,167,44,0) 0%,
+      rgba(231,167,44,.14) 35%,
+      rgba(231,167,44,0) 70%) 0 0/220% 100% no-repeat,
+
+    /* 第二道絲帶（方向相反） */
+    linear-gradient(115deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,.18) 40%,
+      rgba(255,255,255,0) 75%) 0 0/220% 100% no-repeat,
+
+    /* 命運門本體底色 */
+    linear-gradient(180deg,
+      rgba(255,228,220,.92),
+      rgba(255,210,200,.92)) !important;
+
+  /* 邊框＋內框：不土、像卡牌格 */
+  box-shadow:
+    inset 0 0 0 1px rgba(209,54,49,.26),
+    inset 0 0 0 2px rgba(231,167,44,.10),
+    inset 0 1px 0 rgba(255,255,255,.55);
+
+  transition: box-shadow .16s ease, transform .16s ease, filter .16s ease;
+}
+
+/* ✅ 讓第 14 格永遠跟命運門一致（你之前顏色不一的來源） */
+table#grid tbody tr td.gate:nth-child(14){
+  background:
+    linear-gradient(115deg,
+      rgba(231,167,44,0) 0%,
+      rgba(231,167,44,.14) 35%,
+      rgba(231,167,44,0) 70%) 0 0/220% 100% no-repeat,
+    linear-gradient(115deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,.18) 40%,
+      rgba(255,255,255,0) 75%) 0 0/220% 100% no-repeat,
+    linear-gradient(180deg,
+      rgba(255,228,220,.92),
+      rgba(255,210,200,.92)) !important;
+}
+
+/* 角落微光：像「抽卡格」的高級細節 */
+table#grid td.gate::before{
+  content:"";
+  position:absolute;
+  inset: 6px;
+  border-radius: 10px;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(231,167,44,.18), transparent 48%),
+    radial-gradient(circle at 84% 78%, rgba(209,54,49,.14), transparent 52%);
+  opacity: .9;
+}
+
+/* 金粉點點：很淡，不廉價 */
+table#grid td.gate::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle, rgba(231,167,44,.22) 0 1px, transparent 2px) 0 0/28px 28px,
+    radial-gradient(circle, rgba(255,255,255,.16) 0 1px, transparent 2px) 12px 16px/34px 34px;
+  opacity: .35;
+  mix-blend-mode: screen;
+}
+
+/* 動起來：平常非常淡的流光 */
+table#grid td.gate{
+  animation: gateShimmer 5.8s linear infinite;
+}
+
+/* Hover：更像「可點互動」但不浮誇 */
+table#grid td.gate:hover{
+  transform: translateY(-2px);
+  filter: saturate(1.06) brightness(1.02);
+  box-shadow:
+    inset 0 0 0 2px rgba(209,54,49,.45),
+    inset 0 0 0 3px rgba(231,167,44,.18),
+    0 14px 22px rgba(17,24,39,.16),
+    0 0 0 6px rgba(231,167,44,.08);
+}
+
+/* Hover 時加「呼吸感」 */
+table#grid td.gate:hover{
+  animation: gateShimmer 2.8s linear infinite, gatePulse .9s ease-in-out infinite;
+}
+
+/* 低動作偏好：自動關動畫（保險） */
+@media (prefers-reduced-motion: reduce){
+  table#grid td.gate{ animation: none; }
+  table#grid td.gate:hover{ animation: none; }
+}
+
+
+.posterTitle{
+  width: 460px;
+  margin: 6px 0;
+}
+
+.posterTitle img{
+  width: 100%;
+  display: block;
+  filter: drop-shadow(0 3px 8px rgba(255,180,60,.35));
+}
+
+
+
+
+
+
+
+
+/* =========================
+   左上公司名稱（鎖定左上）
+   ========================= */
+.posterKicker{
+  position: absolute;
+  top: 18px;
+  left: 24px;
+
+  padding: 6px 18px;
+
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+
+  color: #111 !important;           /* 強制黑字 */
+  background: transparent !important;
+
+  border: 2px solid #d4a43c;
+  border-radius: 999px;
+
+  box-shadow:
+    0 0 0 1px rgba(255,210,120,.4),
+    0 3px 8px rgba(0,0,0,.25);
+
+  text-shadow: none !important;
+  z-index: 50;
+}
+
+
+/* =========================
+   命運門 / 保護區 / 終點
+   ========================= */
+.posterRule{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-top: 8px;
+}
+
+.posterRule span:not(.posterSep){
+  padding: 6px 16px;
+
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  color: #111 !important;           /* 強制黑字 */
+  background: transparent !important;
+
+  border: 2px solid #d4a43c;
+  border-radius: 999px;
+
+  box-shadow:
+    0 0 0 1px rgba(255,215,130,.35),
+    0 3px 10px rgba(0,0,0,.25);
+
+  text-shadow: none !important;
+}
+
+/* 分隔線 */
+.posterRule .posterSep{
+  color: #111;
+}
+
+
+/* 1) 讓整個 header 區塊有上方空間，避免吃到左上公司名 */
+.posterHeader{
+  position: relative;          /* 重要：給 absolute 的基準 */
+  padding-top: 38px;           /* ✅ 預留給 CHEN… */
+  padding-bottom: 10px;
+}
+
+/* 2) 左上公司名：固定在左上，不跟主標打架 */
+.posterKicker{
+  position: absolute;
+  top: 10px;                   /* ✅ 往上貼一點 */
+  left: 18px;
+
+  z-index: 9999;               /* ✅ 一定在最上層 */
+
+  padding: 4px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+
+  color: #111 !important;
+  background: transparent !important;
+
+  border: 2px solid #d4a43c;
+  border-radius: 999px;
+
+  box-shadow:
+    0 0 0 1px rgba(255,210,120,.35),
+    0 3px 8px rgba(0,0,0,.22);
+
+  text-shadow: none !important;
+}
+
+/* 3) 主標題：稍微往下，避免和 CHEN…重疊 */
+.header-title{
+  margin-top: 6px;
+}
+
+/* 4) 下面膠囊規則：跟主標拉開距離 */
+.posterRule{
+  margin-top: 14px;            /* ✅ 避免貼到主標 */
+}
+
+
+
+
+
+
+
+
+
+
+/* ===== 左上標題區塊容器 ===== */
+.posterLeft{
+  position: relative;
+  padding-top: 18px;
+  padding-left: 18px;
+}
+
+/* ===== 公司名（左上膠囊） ===== */
+.posterKicker{
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  padding: 6px 14px;
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+
+  color: #111;
+  background: linear-gradient(
+    180deg,
+    #fff4c4 0%,
+    #e8b65c 100%
+  );
+
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.6);
+
+  z-index: 5;
+}
+
+/* ===== 主標圖（呈英繁華賽馬盤） ===== */
+.posterTitle{
+  margin-top: 18px; /* ← 關鍵：讓開上方膠囊 */
+}
+
+.posterTitle img{
+  height: 72px;
+  max-width: 100%;
+  display: block;
+}
+
+/* ===== 規則列（膠囊群） ===== */
+.posterRule{
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* 單一規則膠囊 */
+.posterRule span{
+  padding: 6px 14px;
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #111;
+  background: linear-gradient(
+    180deg,
+    #fff7dc 0%,
+    #f2c86d 100%
+  );
+
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.15),
+    inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* 中間分隔符號「—」不要膠囊 */
+.posterRule .posterSep{
+  background: none;
+  box-shadow: none;
+  padding: 0 6px;
+  color: #7a4a10;
+  font-weight: 700;
+}
+
+
+
+
+<div class="posterLeft">
+  <div class="posterKicker">CHEN YIN PUMP CO., LTD.</div>
+
+  <div class="posterTitle">
+    <img src="title_final_gold.png" alt="呈英繁華賽馬盤">
+  </div>
+
+  <div class="posterRule">
+    <span>命運門：3 / 6 / 9 / 12 / 14（踩到才觸發）</span>
+    <span class="posterSep">—</span>
+    <span>保護區：15~17（免疫）</span>
+    <span class="posterSep">—</span>
+    <span>終點：18（鎖名次）</span>
+  </div>
+</div>
+
+
+<div class="posterLeft">
+  <div class="posterKicker">CHEN YIN PUMP CO., LTD.</div>
+
+  <div class="posterTitle">
+    <img src="title_final_gold.png" alt="呈英繁華賽馬盤">
+  </div>
+
+  <div class="posterRule">
+    <span>命運門：3 / 6 / 9 / 12 / 14（踩到才觸發）</span>
+    <span class="posterSep">—</span>
+    <span>保護區：15~17（免疫）</span>
+    <span class="posterSep">—</span>
+    <span>終點：18（鎖名次）</span>
+  </div>
+</div>
+
+
+.posterLeft{
+  position: relative;
+  padding-left: 44px;
+  padding-top: 38px;   /* 給公司名空間 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+
+.posterKicker{
+  position: absolute;
+  top: 6px;
+  left: 44px;
+
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+
+  color: #111;
+
+  background: linear-gradient(
+    180deg,
+    #fff7d0 0%,
+    #f0c766 60%,
+    #d49a2d 100%
+  );
+
+  border-radius: 999px;
+  border: 2px solid rgba(200,140,30,.95);
+
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.2),
+    0 0 0 3px rgba(255,220,130,.25);
+
+  white-space: nowrap;
+}
+
+
+.posterTitle img{
+  display: block;
+  max-height: 86px;
+  width: auto;
+  max-width: none;
+}
+
+.posterRule{
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.posterRule span{
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #111;
+
+  background: rgba(255,255,255,.6);
+  border: 2px solid rgba(210,150,40,.95);
+}
+
+
+
+.posterRule span:not(.posterSep){
+  padding: 6px 14px;
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+
+  background: linear-gradient(
+    180deg,
+    #fff6d8 0%,
+    #f1c56a 60%,
+    #d8a03a 100%
+  );
+
+  border: 2px solid rgba(210,150,40,.9);
+
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.15),
+    inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+
+.posterSep{
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 16px;
+  color: #a36a1c;
+
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+
+
+/* =========================
+   iPad 11" 投影：左側格子加大版
+   ========================= */
+@media (min-width: 1280px) and (min-height: 720px) {
+
+  /* ⭐ 重點：格子放大 */
+  :root{
+    --cell-w: 110px;   /* 原本 96 → 放大 */
+    --cell-h: 98px;
+  }
+
+  /* 左邊棋盤多給一點空間 */
+  .layout{
+    grid-template-columns: 1fr 500px; /* 右邊稍微縮 */
+    gap: 16px;
+  }
+
+  /* 表頭數字不擠 */
+  thead th{
+    font-size: 16px;
+  }
+
+  /* 左側車道名稱 */
+  .rowTheme{
+    font-size: 24px;
+  }
+  .rowMembers{
+    font-size: 15px;
+  }
+
+  /* 標題微放大 */
+  .topBar h1{
+    font-size: 40px;
+  }
+
+  /* 右邊資訊區維持可讀 */
+  .panel h3{ font-size: 18px; }
+  .rank, .log{ font-size: 14px; }
+
+  /* 防止 log 太高 */
+  .log{ max-height: 230px; }
+}
+
+
+
+
+
+
+
+
+</style>
+</head>
+
+<body class="cnyPoster cnyGold">
+
+  <div class="topBar posterHeader">
+  <div class="posterLeft">
+    <div class="posterKicker">CHEN YIN PUMP CO.,LTD.</div>
+    <div class="posterTitle">
+  <img src="title_final_gold.png" alt="呈英繁華賽馬盤">
+</div>
+    <div class="posterRule">
+      <span>命運門：3 / 6 / 9 / 12 / 14（踩到才觸發）</span>
+      <span class="posterSep">—</span>
+      <span>保護區：15~17（免疫）</span>
+      <span class="posterSep">—</span>
+      <span>終點：18（鎖名次）</span>
+    </div>
+  </div>
+
+  <div class="posterRight">
+    <div class="posterStamp">馬年行大運</div>
+    
+  </div>
+</div>
+
+
+ <div class="layout">
+  <!-- 左邊：賽馬盤 + 獎金 -->
+  <div class="leftCol">
+    <div class="card cardPad">
+      <table id="grid"></table>
+    </div>
+
+    <!-- ✅ 獎金分配：放左邊（跟賽馬盤同欄） -->
+    <div class="panel prizePanel">
+      <div class="cardTitle">獎金分配</div>
+      <div class="prizeInlineRow">
+        <div class="prizeItem"><b>第一名</b> 10000×1｜8000×1｜6000×1</div>
+        <div class="prizeItem"><b>第二名</b> 6000×1｜5000×2</div>
+        <div class="prizeItem"><b>第三名</b> 5000×2｜4000×1</div>
+        <div class="prizeItem"><b>第四名</b> 4000×3</div>
+        <div class="prizeItem"><b>第五名</b> 4000×3</div>
+        <div class="prizeItem"><b>第六名</b> 4000×2</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ 右邊：三個面板一定要在 rightCol 裡 -->
+  <div class="rightCol">
+    <div class="panel">
+      <h3>隊伍成員指派（每匹馬最多 3 人）</h3>
+      <div class="muted">先點成員 → 再點要加入的馬。</div>
+      <div id="teamArea"></div>
+
+      <div style="margin:10px 0 6px 0; font-weight:1000; font-size:14px; color: rgba(11,18,32,.86);">可選成員：</div>
+      <div id="memberPool"></div>
+      <div class="poolHint" id="poolHint"></div>
+
+      <div class="btns">
+        <button id="resetTeamsBtn">重置隊伍</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>目前名次（到 18「金色終點」即鎖定）</h3>
+      <ol id="rankList" class="rank"></ol>
+      <div id="status" class="muted">準備就緒。</div>
+      <div class="btns">
+        <button id="resetRaceBtn">重置比賽</button>
+        <button id="clearLogBtn">清空紀錄</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>事件紀錄（含時間）</h3>
+      <ol id="logList" class="log"></ol>
+      <div class="muted">保護區（15~17）免疫：不觸發命運門，也不受卡片影響。</div>
+    </div>
+  </div>
+</div>
+
+
+      
+  <!-- Modal -->
+  <div id="backdrop" class="backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modalHeader">命運門觸發：請點選你現場抽到的卡</div>
+      <div class="modalBody">
+        <div id="modalTitle" style="font-weight:1000; font-size:16px; color:var(--blue);"></div>
+        <div class="badgeRow">
+          <div id="bTime" class="badge"></div>
+          <div id="bHorse" class="badge"></div>
+          <div id="bGate" class="badge"></div>
+        </div>
+
+        <div class="cardGrid" id="cardGrid"></div>
+        <div class="muted">你是現場抽卡，這裡只負責讓你點選抽到的卡並自動套用效果。</div>
+      </div>
+      <div class="modalBtns">
+        <button id="btnClose">取消/不套用</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================
+   馬蹄聲：Web Audio（前進才播放）
+   ========================= */
+let audioCtx = null;
+function ensureAudio(){
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+}
+function playHoof(){
+  if (!audioCtx) return;
+  const t0 = audioCtx.currentTime;
+
+  const osc = audioCtx.createOscillator();
+  const g1  = audioCtx.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(140, t0);
+  osc.frequency.exponentialRampToValueAtTime(70, t0 + 0.08);
+  g1.gain.setValueAtTime(0.0001, t0);
+  g1.gain.exponentialRampToValueAtTime(0.55, t0 + 0.01);
+  g1.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.12);
+  osc.connect(g1).connect(audioCtx.destination);
+  osc.start(t0);
+  osc.stop(t0 + 0.13);
+
+  const bufferSize = Math.floor(audioCtx.sampleRate * 0.05);
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++){
+    data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+  }
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = buffer;
+
+  const hp = audioCtx.createBiquadFilter();
+  hp.type = "highpass";
+  hp.frequency.setValueAtTime(1200, t0);
+
+  const g2 = audioCtx.createGain();
+  g2.gain.setValueAtTime(0.0001, t0);
+  g2.gain.exponentialRampToValueAtTime(0.22, t0 + 0.005);
+  g2.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.05);
+
+  noise.connect(hp).connect(g2).connect(audioCtx.destination);
+  noise.start(t0);
+  noise.stop(t0 + 0.05);
+}
+function playHoofSteps(count=1, gap=0.12){
+  if (!audioCtx) return;
+  for (let k=0;k<count;k++) setTimeout(()=> playHoof(), Math.round(k*gap*1000));
+}
+
+/* =========================
+   6 隻可愛卡通小馬（內建 SVG）
+   ========================= */
+function svgDataUri(svg){ return "data:image/svg+xml;utf8," + encodeURIComponent(svg); }
+function makePonySvg(o){
+  const { body, belly, hoof, mane, cheek, outline="#2a1c12", deco="" } = o;
+  return `
+  <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+    <ellipse cx="58" cy="76" rx="34" ry="24" fill="${body}" stroke="${outline}" stroke-width="3"/>
+    <ellipse cx="52" cy="82" rx="18" ry="12" fill="${belly}" opacity=".8"/>
+    <path d="M27 78c-10 6-14 18-6 26 14-2 24-12 26-20-6-6-12-8-20-6z"
+          fill="${mane}" stroke="${outline}" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="88" cy="60" rx="28" ry="24" fill="${body}" stroke="${outline}" stroke-width="3"/>
+    <ellipse cx="102" cy="68" rx="18" ry="14" fill="${cheek}" stroke="${outline}" stroke-width="3"/>
+    <circle cx="92" cy="56" r="5.8" fill="#111"/>
+    <circle cx="90.5" cy="54.5" r="2.2" fill="#fff"/>
+    <path d="M96 75c6 6 18 6 24-1" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" opacity=".65"/>
+    <path d="M64 54c6-22 30-26 44-16-12 2-18 6-22 14-4 8-10 12-22 12z"
+          fill="${mane}" stroke="${outline}" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="40" y="92" width="14" height="22" rx="6" fill="${body}" stroke="${outline}" stroke-width="3"/>
+    <rect x="62" y="94" width="14" height="22" rx="6" fill="${body}" stroke="${outline}" stroke-width="3"/>
+    <rect x="78" y="88" width="14" height="20" rx="6" fill="${body}" stroke="${outline}" stroke-width="3"/>
+    <rect x="40" y="108" width="14" height="10" rx="5" fill="${hoof}" stroke="${outline}" stroke-width="3"/>
+    <rect x="62" y="110" width="14" height="10" rx="5" fill="${hoof}" stroke="${outline}" stroke-width="3"/>
+    <rect x="78" y="102" width="14" height="10" rx="5" fill="${hoof}" stroke="${outline}" stroke-width="3"/>
+    ${deco}
+  </svg>`;
+}
+const ponySvgs = [
+  makePonySvg({ body:"#4e6cff", belly:"#a8c0ff", hoof:"#2b2b2b", mane:"#00e5ff", cheek:"#d7dcff",
+    deco:`<circle cx="22" cy="26" r="4" fill="#FA2D1A"/><circle cx="36" cy="18" r="3" fill="#2E4C8C"/>` }),
+  makePonySvg({ body:"#F7B733", belly:"#FFE8A3", hoof:"#6b3f12", mane:"#D97706", cheek:"#FFF3E1",
+    deco:`<path d="M10 24h50" stroke="#FA2D1A" stroke-width="6" opacity=".18" stroke-linecap="round"/>` }),
+  makePonySvg({ body:"#6aa9ff", belly:"#cfe3ff", hoof:"#2b2b2b", mane:"#2E4C8C", cheek:"#e7f1ff",
+    deco:`<path d="M74 88l6-6 6 6-6 14z" fill="#FFF3E1" stroke="#2a1c12" stroke-width="3" stroke-linejoin="round"/>` }),
+  makePonySvg({ body:"#9aa7b5", belly:"#cfd6dd", hoof:"#32363b", mane:"#3d4a55", cheek:"#eef2f6",
+    deco:`<circle cx="104" cy="16" r="4" fill="#2E4C8C" opacity=".65"/>` }),
+  makePonySvg({ body:"#c9853a", belly:"#e6b07a", hoof:"#6d4a2b", mane:"#3f2a1a", cheek:"#f2c9a4",
+    deco:`<path d="M10 22h50" stroke="#FA2D1A" stroke-width="6" opacity=".14" stroke-linecap="round"/>` }),
+  makePonySvg({ body:"#e7ecf3", belly:"#fff", hoof:"#1b1b1b", mane:"#111", cheek:"#f4f4f4",
+    deco:`<path d="M10 118 L118 10" stroke="#2E4C8C" stroke-width="6" opacity=".10"/>` }),
+];
+const horseImgSrc = ponySvgs.map(svgDataUri);
+
+/* =========================
+   遊戲設定
+   ========================= */
+const COLS = 18;
+const SAFE_START = 15, SAFE_END = 17;
+const FINISH_COL = 18;
+const GATES = [3, 6, 9, 12, 14];
+
+const horses = [
+  { theme: "夜上海",   img: horseImgSrc[0], members: [] },
+  { theme: "華燈娛樂", img: horseImgSrc[1], members: [] },
+  { theme: "繁花貿易", img: horseImgSrc[2], members: [] },
+  { theme: "港都航運", img: horseImgSrc[3], members: [] },
+  { theme: "百樂門",   img: horseImgSrc[4], members: [] },
+  { theme: "金城武",   img: horseImgSrc[5], members: [] }
+];
+
+let pos = Array(horses.length).fill(0);
+let finishedOrder = [];
+
+const CARD_DEFS = [
+  { id:"c1", kind:"chance", title:"💃 舞小姐加油", desc:"前進 +2", action:(ctx)=> moveBy(ctx.horseIndex, +2, "💃 舞小姐加油") },
+  { id:"c2", kind:"chance", title:"💼 金主加碼",   desc:"前進 +1", action:(ctx)=> moveBy(ctx.horseIndex, +1, "💼 金主加碼") },
+  { id:"c3", kind:"chance", title:"🍾 老闆賞紅包", desc:"前進 +3", action:(ctx)=> moveBy(ctx.horseIndex, +3, "🍾 老闆賞紅包") },
+  { id:"c4", kind:"chance", title:"🎉 全場應援",   desc:"全部馬前進 +1", action:(ctx)=> moveAll(+1, "🎉 全場應援") },
+  { id:"f1", kind:"fate", title:"🍷 老闆喝茫", desc:"倒退 -1", action:(ctx)=> moveBy(ctx.horseIndex, -1, "🍷 老闆喝茫") },
+  { id:"f2", kind:"fate", title:"💔 騎師失誤", desc:"倒退 -2", action:(ctx)=> moveBy(ctx.horseIndex, -2, "💔 騎師失誤") },
+  { id:"f3", kind:"fate", title:"🧨 馬失蹄",   desc:"該匹馬倒退 -2", action:(ctx)=> moveBy(ctx.horseIndex, -2, "🧨 馬失蹄") },
+];
+
+const members = [
+  "張董","龔總","張協理","黃馨",
+  "伍經理","龔品慈","陳靜玟",
+  "莊經理","王文娟","柯雅婷",
+  "古小姐","陳小林","黃文質",
+  "張龍賢","王皓俊","聿卉","王鐘毅"
+];
+let selectedMember = null;
+
+/* =========================
+   建表
+   ========================= */
+const table = document.getElementById("grid");
+const thead = document.createElement("thead");
+
+const trGroup = document.createElement("tr");
+const corner1 = document.createElement("th");
+corner1.className = "corner";
+trGroup.appendChild(corner1);
+
+const thEmpty = document.createElement("th");
+thEmpty.className = "group-empty";
+thEmpty.colSpan = 14;
+trGroup.appendChild(thEmpty);
+
+const thSafe = document.createElement("th");
+thSafe.className = "group-safe";
+thSafe.colSpan = 3;
+thSafe.innerHTML = "保護區<br>（免疫機會&命運）";
+trGroup.appendChild(thSafe);
+
+const thFinish = document.createElement("th");
+thFinish.className = "group-finish";
+thFinish.textContent = "終點";
+trGroup.appendChild(thFinish);
+
+thead.appendChild(trGroup);
+
+const trNums = document.createElement("tr");
+const corner2 = document.createElement("th");
+corner2.className = "corner";
+trNums.appendChild(corner2);
+
+for (let c=1;c<=COLS;c++){
+  const th = document.createElement("th");
+  th.textContent = c;
+  trNums.appendChild(th);
+}
+thead.appendChild(trNums);
+table.appendChild(thead);
+
+const tbody = document.createElement("tbody");
+const rowHeads = [];
+
+horses.forEach((h, rowIndex)=>{
+  const tr = document.createElement("tr");
+
+  const rowHead = document.createElement("th");
+  rowHead.className = "rowhead";
+  rowHead.title = "點這裡分配成員到這匹馬（最多 3 人）";
+  rowHead.addEventListener("click", ()=> assignMemberToHorse(rowIndex));
+  tr.appendChild(rowHead);
+  rowHeads.push(rowHead);
+
+  for (let col=1; col<=COLS; col++){
+    const td = document.createElement("td");
+    td.dataset.row = rowIndex;
+    td.dataset.col = col;
+
+    if (GATES.includes(col)) td.classList.add("gate");
+    if (col >= SAFE_START && col <= SAFE_END) td.classList.add("safe");
+    if (col === FINISH_COL) td.classList.add("finish");
+
+    td.addEventListener("click", ()=> onMove(rowIndex, col));
+    tr.appendChild(td);
+  }
+  tbody.appendChild(tr);
+});
+table.appendChild(tbody);
+
+/* =========================
+   Modal（命運門）
+   ========================= */
+const backdrop = document.getElementById("backdrop");
+const modalTitle = document.getElementById("modalTitle");
+const bTime = document.getElementById("bTime");
+const bHorse = document.getElementById("bHorse");
+const bGate = document.getElementById("bGate");
+const cardGrid = document.getElementById("cardGrid");
+const btnClose = document.getElementById("btnClose");
+let pending = null;
+
+function openPicker(horseIndex, gateCol){
+  const timeStr = nowTime();
+  pending = { horseIndex, gateCol, timeStr };
+
+  modalTitle.textContent = "請點選你現場抽到的卡";
+  bTime.textContent = `時間：${timeStr}`;
+  bGate.textContent = `命運門：第 ${gateCol} 欄`;
+  bHorse.textContent = `馬：${getHorseDisplay(horseIndex)}`;
+
+  cardGrid.innerHTML = "";
+  CARD_DEFS.forEach(card=>{
+    const btn = document.createElement("button");
+    btn.className = `cardBtn ${card.kind === "chance" ? "chance" : "fate"}`;
+    btn.innerHTML = `<div class="cardTitle">${card.kind === "chance" ? "🟢" : "🔴"} ${card.title}</div><div>${card.desc}</div>`;
+    btn.addEventListener("click", ()=> applyCard(card.id));
+    cardGrid.appendChild(btn);
+  });
+
+  backdrop.style.display = "flex";
+}
+function closePicker(){ backdrop.style.display = "none"; pending = null; }
+btnClose.addEventListener("click", closePicker);
+backdrop.addEventListener("click", (e)=>{ if(e.target===backdrop) closePicker(); });
+
+function applyCard(cardId){
+  if (!pending) return;
+  const card = CARD_DEFS.find(c=>c.id===cardId);
+  if (!card) return;
+
+  const ctx = { ...pending };
+  addLog(`[${ctx.timeStr}] [命運門 ${ctx.gateCol}] ${getHorseDisplay(ctx.horseIndex)} → ${card.kind==="chance"?"🟢機會":"🔴命運"}｜${card.title}（${card.desc}）`);
+  closePicker();
+  card.action(ctx);
+}
+
+/* =========================
+   移動邏輯
+   ========================= */
+function clampCol(c){ return Math.max(1, Math.min(FINISH_COL, c)); }
+function isImmune(i){ return pos[i] >= SAFE_START && pos[i] <= SAFE_END; }
+
+function onMove(i, targetCol){
+  ensureAudio();
+  targetCol = clampCol(targetCol);
+  if (finishedOrder.includes(i)) return;
+
+  const from = pos[i];
+  const to = targetCol;
+
+  if (to > from) playHoofSteps(Math.min(3, to-from), 0.11);
+
+  pos[i] = to;
+  renderHorses();
+
+  if (to === FINISH_COL){ lockFinish(i); return; }
+  if (to >= SAFE_START && to <= SAFE_END){
+    setStatus(`「${getHorseDisplay(i)}」進入保護區（15~17），免疫機會&命運。`);
+    return;
+  }
+  if (GATES.includes(to)){ openPicker(i, to); return; }
+
+  setStatus(`「${getHorseDisplay(i)}」移動：第 ${from} → 第 ${to} 欄。`);
+}
+
+function moveBy(i, delta, label){
+  ensureAudio();
+  if (finishedOrder.includes(i)) return;
+
+  if (isImmune(i)){
+    addLog(`（免疫）${getHorseDisplay(i)} 位於保護區，忽略效果：${label}`);
+    setStatus(`（免疫）「${getHorseDisplay(i)}」在保護區，忽略：${label}`);
+    return;
+  }
+
+  const before = pos[i];
+  const after = clampCol(before + delta);
+
+  if (after > before) playHoofSteps(Math.min(3, after-before), 0.11);
+
+  pos[i] = after;
+  renderHorses();
+
+  if (after === FINISH_COL){
+    addLog(`→ ${label}：${getHorseDisplay(i)} 抵達終點！`);
+    lockFinish(i);
+    return;
+  }
+  if (after >= SAFE_START && after <= SAFE_END){
+    addLog(`→ ${label}：${getHorseDisplay(i)} 進入保護區（免疫）。`);
+    setStatus(`「${getHorseDisplay(i)}」受 ${label} 影響：第 ${before} → 第 ${after}（進入保護區免疫）`);
+    return;
+  }
+  setStatus(`「${getHorseDisplay(i)}」受 ${label} 影響：第 ${before} → 第 ${after} 欄。`);
+}
+
+function moveAll(delta, label){
+  ensureAudio();
+  if (delta > 0) playHoofSteps(3, 0.10);
+
+  for (let i=0;i<horses.length;i++){
+    if (finishedOrder.includes(i)) continue;
+    if (isImmune(i)) continue;
+    pos[i] = clampCol(pos[i] + delta);
+    if (pos[i] === FINISH_COL) lockFinish(i, true);
+  }
+  renderHorses();
+  setStatus(`${label}：全體前進 +1（保護區免疫不動）`);
+}
+
+/* =========================
+   名次
+   ========================= */
+function lockFinish(i, silent=false){
+  if (finishedOrder.includes(i)) return;
+  finishedOrder.push(i);
+  updateRanking();
+
+  if (!silent) setStatus(`「${getHorseDisplay(i)}」抵達金色終點！目前第 ${finishedOrder.length} 名。`);
+  if (finishedOrder.length === horses.length) setStatus("比賽結束：已產出 1～6 名最終排名。");
+}
+
+/* =========================
+   顯示／紀錄
+   ========================= */
+function getHorseDisplay(i){
+  const h = horses[i];
+  const mem = h.members.length ? h.members.join("、") : "（尚未指派）";
+  return `${h.theme}｜${mem}`;
+}
+
+function renderRowHeads(){
+  for (let i=0;i<horses.length;i++){
+    const h = horses[i];
+    const memText = h.members.length ? h.members.join("、") : "（尚未指派）";
+    const hint = selectedMember ? "（點選可加入此馬）" : "（點選指派成員）";
+    rowHeads[i].innerHTML = `
+      <div class="rowheadWrap">
+        <div class="rowTheme">${h.theme}</div>
+        <div class="rowMembers">${memText}</div>
+        <div class="rowHint">${hint}｜${h.members.length}/3</div>
+      </div>
+    `;
+  }
+}
+
+function renderHorses(){
+  tbody.querySelectorAll("td").forEach(td => td.innerHTML = "");
+  for (let i=0;i<horses.length;i++){
+    const p = pos[i];
+    if (p <= 0) continue;
+    const row = tbody.children[i];
+    const cell = row.querySelector(`td[data-col="${p}"]`);
+    if (cell){
+      cell.innerHTML = `<img class="horseImg" src="${horses[i].img}" alt="${horses[i].theme}">`;
+    }
+  }
+}
+
+function updateRanking(){
+  const rankList = document.getElementById("rankList");
+  rankList.innerHTML = "";
+  if (finishedOrder.length === 0){
+    const li = document.createElement("li");
+    li.textContent = "尚未有人抵達終點。";
+    rankList.appendChild(li);
+    return;
+  }
+  finishedOrder.forEach((rowIndex, idx)=>{
+    const li = document.createElement("li");
+    li.textContent = `${idx+1} 名：${getHorseDisplay(rowIndex)}`;
+    rankList.appendChild(li);
+  });
+}
+
+function addLog(text){
+  const logList = document.getElementById("logList");
+  const li = document.createElement("li");
+  li.textContent = text;
+  logList.prepend(li);
+}
+
+function setStatus(text){
+  document.getElementById("status").textContent = text;
+}
+
+function nowTime(){
+  const d = new Date();
+  const pad = (n)=> String(n).padStart(2,"0");
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+/* =========================
+   組隊（每匹馬最多 3 人）
+   ========================= */
+const teamArea = document.getElementById("teamArea");
+const memberPool = document.getElementById("memberPool");
+const poolHint = document.getElementById("poolHint");
+
+function usedMembersSet(){
+  const used = new Set();
+  horses.forEach(h => h.members.forEach(m => used.add(m)));
+  return used;
+}
+
+function renderTeamUI(){
+  teamArea.innerHTML = "";
+  horses.forEach((h, i)=>{
+    const isFull = h.members.length >= 3;
+    const div = document.createElement("div");
+    div.className = "teamSlot" + (isFull ? " full" : "");
+    div.addEventListener("click", ()=> assignMemberToHorse(i));
+
+    const memText = h.members.length ? h.members.join("、") : "（尚未指派）";
+    div.innerHTML = `
+      <div class="slotTitle">${h.theme}</div>
+      <div class="slotMembers ${h.members.length ? "" : "empty"}">${memText}</div>
+      <div class="slotHint">${selectedMember ? (isFull ? "此馬已滿 3 人" : "點我加入「"+selectedMember+"」") : "先選成員再點我"}｜${h.members.length}/3</div>
+    `;
+    teamArea.appendChild(div);
+  });
+
+  memberPool.innerHTML = "";
+  const used = usedMembersSet();
+  const remaining = members.filter(m => !used.has(m));
+
+  members.forEach(name=>{
+    const isUsed = used.has(name);
+    const btn = document.createElement("button");
+    btn.textContent = name;
+    btn.disabled = isUsed;
+
+    if (!isUsed){
+      btn.addEventListener("click", ()=>{
+        ensureAudio();
+        selectedMember = name;
+        renderTeamUI();
+        renderRowHeads();
+        setStatus(`已選擇成員「${name}」。請點選要加入的馬（每匹最多 3 人）。`);
+      });
+    }
+    memberPool.appendChild(btn);
+  });
+
+  poolHint.textContent = `剩餘可選：${remaining.length} 人` + (selectedMember ? `｜目前選擇：${selectedMember}` : "");
+}
+
+function assignMemberToHorse(horseIndex){
+  ensureAudio();
+  if (!selectedMember){
+    setStatus("請先在右側「可選成員」點一個名字，再點要加入的馬。");
+    return;
+  }
+
+  const h = horses[horseIndex];
+  if (h.members.length >= 3){
+    setStatus(`「${h.theme}」已滿 3 人，請選其他馬。`);
+    return;
+  }
+
+  const used = usedMembersSet();
+  if (used.has(selectedMember)){
+    setStatus(`成員「${selectedMember}」已被使用，請換一位。`);
+    selectedMember = null;
+    renderTeamUI();
+    renderRowHeads();
+    return;
+  }
+
+  h.members.push(selectedMember);
+  setStatus(`已加入：${selectedMember} → ${h.theme}（${h.members.length}/3）`);
+  selectedMember = null;
+
+  renderTeamUI();
+  renderRowHeads();
+  updateRanking();
+}
+
+function resetTeams(){
+  horses.forEach(h=> h.members = []);
+  selectedMember = null;
+  renderTeamUI();
+  renderRowHeads();
+  updateRanking();
+  setStatus("已重置隊伍。");
+}
+
+/* Buttons */
+document.getElementById("resetTeamsBtn").addEventListener("click", ()=>{ ensureAudio(); resetTeams(); });
+
+document.getElementById("resetRaceBtn").addEventListener("click", ()=>{
+  ensureAudio();
+  pos = Array(horses.length).fill(0);
+  finishedOrder = [];
+  renderHorses();
+  updateRanking();
+  setStatus("已重置比賽。");
+});
+
+document.getElementById("clearLogBtn").addEventListener("click", ()=>{
+  ensureAudio();
+  document.getElementById("logList").innerHTML = "";
+  setStatus("已清空紀錄。");
+});
+
+/* Init */
+renderTeamUI();
+renderRowHeads();
+updateRanking();
+renderHorses();
+setStatus("準備就緒：白底賽道、金色終點。踩到命運門會跳卡片。");
+</script>
+
